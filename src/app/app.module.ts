@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { LOCALE_ID, NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
 import { AngularFireModule } from '@angular/fire';
@@ -19,7 +19,7 @@ import { CoreModule } from './core/core.module';
     BrowserAnimationsModule,
     MatSliderModule,
   ],
-  providers: [],
+  providers: [{ provide: LOCALE_ID, useValue: 'fr-FR' }],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

@@ -8,7 +8,12 @@ import { AngularFirestore } from '@angular/fire/firestore';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ListComponent {
-  list$ = this.angularFirestore.collection('games').valueChanges();
+  private readonly gameCollection = this.angularFirestore.collection('games');
+  list$ = this.gameCollection.valueChanges({ idField: 'id' });
 
   constructor(private angularFirestore: AngularFirestore) {}
+
+  createGame() {
+    this.gameCollection.add({ created: new Date() });
+  }
 }

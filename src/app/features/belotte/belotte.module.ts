@@ -7,6 +7,6 @@ import { ListModule } from './list/list.module';
 @NgModule({
   declarations: [],
   imports: [CommonModule, BelotteRoutingModule, ListModule],
-  exports: [BelotteRoutingModule],
+  exports: [],
 })
 export class BelotteModule {}

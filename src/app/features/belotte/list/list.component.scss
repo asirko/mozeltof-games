@@ -1,3 +1,15 @@
 :host {
   display: block;
 }
+
+header {
+  padding: 20px 0;
+}
+
+main {
+  display: flex;flex-wrap: wrap
+}
+
+mat-card {
+  width: 30%;
+}

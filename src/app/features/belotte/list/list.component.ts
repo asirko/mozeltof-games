@@ -16,4 +16,8 @@ export class ListComponent {
   createGame() {
     this.gameCollection.add({ created: new Date() });
   }
+
+  delete(id: string) {
+    this.gameCollection.doc(id).delete();
+  }
 }

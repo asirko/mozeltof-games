@@ -1,0 +1,11 @@
+{
+  "targets": {
+    "mozeltof-games": {
+      "hosting": {
+        "mozeltof-games": [
+          "mozeltof-games"
+        ]
+      }
+    }
+  }
+}

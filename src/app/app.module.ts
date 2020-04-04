@@ -3,14 +3,14 @@ import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
 import { AngularFireModule } from '@angular/fire';
-import { FIREBASE_CONF } from '../../conf/firebase';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
+import { environment } from '../environments/environment';
 
 @NgModule({
   declarations: [AppComponent],
   imports: [
     BrowserModule,
-    AngularFireModule.initializeApp(FIREBASE_CONF),
+    AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule,
   ],
   providers: [],

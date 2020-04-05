@@ -1,0 +1,9 @@
+<form [formGroup]="form" (ngSubmit)="submit()">
+  <mat-form-field>
+    <mat-label>Choisissez votre Pseudo</mat-label>
+    <input matInput formControlName="pseudo" value="" />
+  </mat-form-field>
+  <div class="controls">
+    <button mat-raised-button color="primary">Valider</button>
+  </div>
+</form>

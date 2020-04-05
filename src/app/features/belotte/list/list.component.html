@@ -1,9 +1,0 @@
-<header>
-  <button mat-raised-button color="primary" (click)="createGame()">Créer une partie</button>
-</header>
-<main>
-  <mat-card *ngFor="let game of list$ | async">
-    <div>Partie: {{ game.id }}</div>
-    <div>Créée le: {{ game.created.seconds * 1000 | date: "medium" }}</div>
-  </mat-card>
-</main>

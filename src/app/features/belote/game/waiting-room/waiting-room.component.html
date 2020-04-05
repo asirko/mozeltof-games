@@ -1,0 +1,20 @@
+<ng-container *ngIf="game$ | async as game">
+  <table class="players">
+    <tr class="player" *ngFor="let player of game.players">
+      <td>{{ player.pseudo }}</td>
+      <td>
+        <mat-button-toggle-group [formControl]="toggleCtrl" *ngIf="currentPlayerId === player.id; else other">
+          <mat-button-toggle [value]="false" class="mat-primary">Attendez moi</mat-button-toggle>
+          <mat-button-toggle [value]="true" class="mat-primary">Je suis prêt</mat-button-toggle>
+        </mat-button-toggle-group>
+        <ng-template #other>
+          <span *ngIf="player.ready" class="player-status is-ready">Est prêt</span>
+          <span *ngIf="!player.ready" class="player-status is-not-ready">Se laisse attendre</span>
+        </ng-template>
+      </td>
+    </tr>
+  </table>
+  <div *ngIf="game.players.length < 4">
+    Il manque encore {{ 4 - game.players.length }} joueur{4 - game.players.length, plural, =1 {} other {s}}
+  </div>
+</ng-container>

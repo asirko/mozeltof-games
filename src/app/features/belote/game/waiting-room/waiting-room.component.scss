@@ -1,0 +1,23 @@
+:host {
+  display: block;
+}
+
+mat-button-toggle.mat-button-toggle-checked {
+  &:first-child {
+    background: var(--warn);
+  }
+  &:last-child {
+    color: #fff;
+    background: var(--primary);
+  }
+}
+
+.player-status {
+  font-weight: bold;
+  &.is-ready {
+    color: var(--primary);
+  }
+  &.is-not-ready {
+    color: var(--warn);
+  }
+}

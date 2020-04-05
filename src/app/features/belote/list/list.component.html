@@ -1,0 +1,13 @@
+<header>
+  <button mat-raised-button color="primary" (click)="createGame()">Créer une partie</button>
+</header>
+<main>
+  <mat-card *ngFor="let game of list$ | async">
+    <div>Partie: {{ game.id }}</div>
+    <div>Créée le: {{ game.created.toMillis() | date: "medium" }}</div>
+    <div>
+      <a [routerLink]="['../game', game.id]" #link>Lien pour rejoindre</a>
+    </div>
+    <button mat-raised-button color="warn" (click)="delete(game.id)">Supprimer</button>
+  </mat-card>
+</main>

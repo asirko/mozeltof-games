@@ -10,14 +10,11 @@ const routes: Routes = [
       {
         path: '',
         pathMatch: 'full',
-        redirectTo: 'belotte',
+        redirectTo: 'belote',
       },
       {
-        path: 'belotte',
-        loadChildren: () =>
-          import('../features/belotte/belotte.module').then(
-            (m) => m.BelotteModule
-          ),
+        path: 'belote',
+        loadChildren: () => import('../features/belote/belote.module').then(m => m.BeloteModule),
       },
     ],
   },

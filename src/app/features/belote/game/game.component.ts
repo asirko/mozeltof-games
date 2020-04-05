@@ -1,7 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { AngularFirestore } from '@angular/fire/firestore';
-import { ActivatedRoute } from '@angular/router';
-import { tap } from 'rxjs/operators';
+import { BeloteService } from '../belote.service';
 
 @Component({
   selector: 'app-game',
@@ -10,11 +8,7 @@ import { tap } from 'rxjs/operators';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GameComponent {
-  private readonly gameId = this.route.snapshot.params.id;
-  game$ = this.angularFirestore
-    .collection('games')
-    .doc('/' + this.gameId)
-    .valueChanges();
+  game$ = this.beloteService.fireGame.valueChanges();
 
-  constructor(private angularFirestore: AngularFirestore, private route: ActivatedRoute) {}
+  constructor(private beloteService: BeloteService) {}
 }

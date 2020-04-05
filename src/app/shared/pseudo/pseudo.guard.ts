@@ -7,8 +7,8 @@ import { PseudoComponent } from './pseudo.component';
 import { map, mapTo, switchMap, tap } from 'rxjs/operators';
 import { fromPromise } from 'rxjs/internal-compatibility';
 
-const PSEUDO_KEY = 'playerPseudo';
-const PLAYER_ID_KEY = 'playerId';
+export const PSEUDO_KEY = 'playerPseudo';
+export const PLAYER_ID_KEY = 'playerId';
 
 @Injectable(/*provided by the module since it requires also the modal component*/)
 export class PseudoGuard implements CanActivate {

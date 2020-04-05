@@ -3,6 +3,9 @@ import { Routes, RouterModule } from '@angular/router';
 import { ListComponent } from './list/list.component';
 import { GameComponent } from './game/game.component';
 import { PseudoGuard } from '../../shared/pseudo/pseudo.guard';
+import { BeloteService } from './belote.service';
+import { WaitingRoomComponent } from './game/waiting-room/waiting-room.component';
+import { RoundComponent } from './game/round/round.component';
 
 const routes: Routes = [
   {
@@ -17,7 +20,22 @@ const routes: Routes = [
   {
     path: 'game/:id',
     component: GameComponent,
-    canActivate: [PseudoGuard],
+    canActivate: [BeloteService],
+    children: [
+      {
+        path: '',
+        pathMatch: 'full',
+        redirectTo: 'waiting-room',
+      },
+      {
+        path: 'waiting-room',
+        component: WaitingRoomComponent,
+      },
+      {
+        path: 'round',
+        component: RoundComponent,
+      },
+    ],
   },
 ];
 

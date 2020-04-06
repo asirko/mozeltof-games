@@ -3,7 +3,7 @@ import { ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot } from '@angul
 import { Observable, of } from 'rxjs';
 import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
 import { first, map, mapTo, switchMap, tap } from 'rxjs/operators';
-import { Belote, Player } from './belote';
+import { Belote, getRandomDeck, Player } from './belote';
 import { PLAYER_ID_KEY, PSEUDO_KEY } from '../../shared/pseudo/pseudo.guard';
 import { fromPromise } from 'rxjs/internal-compatibility';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -36,6 +36,7 @@ export class BeloteService implements CanActivate {
             pseudo: localStorage.getItem(PSEUDO_KEY),
             id: localStorage.getItem(PLAYER_ID_KEY),
             ready: false,
+            hand: [],
           });
         }
         return fromPromise(this.fireGame.update({ players })).pipe(mapTo(true));
@@ -53,5 +54,9 @@ export class BeloteService implements CanActivate {
         tap(players => this.fireGame.update({ players })),
       )
       .subscribe();
+  }
+
+  initGame(playerId: string) {
+    this.fireGame.update({ draw: getRandomDeck(), turnTo: playerId });
   }
 }

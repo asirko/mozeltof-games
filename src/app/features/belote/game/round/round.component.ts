@@ -1,4 +1,8 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { BeloteService } from '../../belote.service';
+import { map } from 'rxjs/operators';
+import { PLAYER_ID_KEY } from '../../../../shared/pseudo/pseudo.guard';
+import { Belote } from '../../belote';
 
 @Component({
   selector: 'app-round',
@@ -6,8 +10,15 @@ import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
   styleUrls: ['./round.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class RoundComponent implements OnInit {
-  constructor() {}
+export class RoundComponent {
+  game$ = this.beloteService.fireGame.valueChanges().pipe(
+    map(game => {
+      const currentPlayerId = localStorage.getItem(PLAYER_ID_KEY);
+      const currentPlayerIndex = game.players.findIndex(p => p.id === currentPlayerId);
+      const players = game.players.map((p, i, list) => list[(i + currentPlayerIndex) % 4]);
+      return { ...game, players } as Belote;
+    }),
+  );
 
-  ngOnInit(): void {}
+  constructor(private beloteService: BeloteService) {}
 }

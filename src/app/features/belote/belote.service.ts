@@ -59,4 +59,8 @@ export class BeloteService implements CanActivate {
   initGame(playerId: string) {
     this.fireGame.update({ draw: getRandomDeck(), turnTo: playerId });
   }
+
+  updateGame(partialGame: Partial<Belote>) {
+    this.fireGame.update(partialGame);
+  }
 }

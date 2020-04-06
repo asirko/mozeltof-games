@@ -18,7 +18,7 @@ export class PseudoGuard implements CanActivate {
     if (localStorage.getItem(PSEUDO_KEY)) {
       return true;
     }
-    const dialogRef = this.matDialog.open(PseudoComponent, { width: '250px' });
+    const dialogRef = this.matDialog.open(PseudoComponent, { width: '250px', disableClose: true });
     return dialogRef.afterClosed().pipe(
       switchMap(pseudo => (pseudo ? this.savePlayerPseudo(pseudo) : of(false))), //
     );

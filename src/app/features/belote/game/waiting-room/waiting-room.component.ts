@@ -17,7 +17,11 @@ export class WaitingRoomComponent implements OnDestroy {
   readonly currentPlayerId = localStorage.getItem(PLAYER_ID_KEY);
   readonly game$ = this.beloteService.fireGame.valueChanges().pipe(
     tap(v => {
-      if (v.players.every(p => p.ready)) {
+      if (v.players.every(p => p.ready) && v.players.length === 4) {
+        if (v.players[0].id === this.currentPlayerId) {
+          this.beloteService.initGame(this.currentPlayerId);
+        }
+
         this.router.navigate(['..', 'round'], { relativeTo: this.route });
       }
       const isReady = v.players.find(p => p.id === this.currentPlayerId).ready;

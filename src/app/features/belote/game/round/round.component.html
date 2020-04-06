@@ -1,1 +1,3 @@
-<p>round works!</p>
+<ng-container *ngIf="game$ | async as game"> </ng-container>
+
+<pre>{{ game$ | async | json }}</pre>

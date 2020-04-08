@@ -8,8 +8,32 @@
     <mat-icon *ngIf="player.isFirst">looks_one</mat-icon>
     <mat-icon *ngIf="game.turnTo === player.id">location_on</mat-icon>
 
-    <div class="hand" *ngIf="isFirst">
-      <span class="card" *ngFor="let card of player.hand">{{ card }}</span>
+    <div
+      class="hand"
+      *ngIf="isFirst"
+      cdkDropList
+      cdkDropListOrientation="horizontal"
+      (cdkDropListDropped)="drop($event, game)"
+    >
+      <div class="card" [ngClass]="card" *ngFor="let card of player.hand" cdkDrag>
+        <div class="corner top left">
+          <div class="value">{{ card.split(" ")[0] }}</div>
+          <div class="color">{{ card.split(" ")[1] }}</div>
+        </div>
+        <div class="corner top right">
+          <div class="value">{{ card.split(" ")[0] }}</div>
+          <div class="color">{{ card.split(" ")[1] }}</div>
+        </div>
+        <div class="corner bottom left">
+          <div class="value">{{ card.split(" ")[0] }}</div>
+          <div class="color">{{ card.split(" ")[1] }}</div>
+        </div>
+        <div class="corner bottom right">
+          <div class="value">{{ card.split(" ")[0] }}</div>
+          <div class="color">{{ card.split(" ")[1] }}</div>
+        </div>
+        <span class="center">{{ card }}</span>
+      </div>
     </div>
   </div>
 

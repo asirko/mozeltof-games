@@ -8,6 +8,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { DistributeComponent } from './modals/distribute.component';
 import { FirstBidComponent } from './modals/first-bid.component';
 import { SecondBidComponent } from './modals/second-bid.component';
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
 const currentPlayerId = localStorage.getItem(PLAYER_ID_KEY);
 
@@ -114,5 +115,12 @@ export class RoundComponent implements OnDestroy {
       });
       this.beloteService.updateGame({ draw, players, turnTo: players.find(p => p.isFirst).id });
     }
+  }
+
+  drop(event: CdkDragDrop<string, any>, game: Belote) {
+    const players: Player[] = game.players.map(p => ({ ...p, hand: [...p.hand] }));
+    moveItemInArray(players[0].hand, event.previousIndex, event.currentIndex);
+    moveItemInArray(game.players[0].hand, event.previousIndex, event.currentIndex);
+    this.beloteService.updateGame({ players });
   }
 }

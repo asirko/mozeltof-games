@@ -15,8 +15,4 @@ import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DistributeComponent implements OnInit {
-  constructor() {}
-
-  ngOnInit(): void {}
-}
+export class DistributeComponent {}

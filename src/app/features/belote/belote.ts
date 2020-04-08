@@ -5,9 +5,13 @@ export interface Belote {
   players?: Player[];
   scores: any; // todo score
   turnTo: string;
-  colorChosen: '♥' | '♦' | '♣' | '♠';
+  chosenColor: BeloteColor;
+  isSecondBid;
+  hasBeenCut: boolean;
   draw: string[];
 }
+
+export type BeloteColor = '♥' | '♦' | '♣' | '♠';
 
 // prettier-ignore
 export const cards32 = [
@@ -45,5 +49,6 @@ export interface Player {
   id: string;
   pseudo: string;
   ready: boolean;
+  isFirst?: boolean;
   hand: string[];
 }

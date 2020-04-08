@@ -1,3 +1,54 @@
 :host {
   display: block;
+  height: 100vh;
+  max-height: 800px;
+  position: relative;
+  background: rgba(blue, 0.1);
+}
+
+.player {
+  background: rgba(red, 0.3);
+  position: absolute;
+
+  &.is-bottom {
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  &.is-left {
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+  }
+  &.is-top {
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  &.is-right {
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+  }
+
+  &.is-top,
+  &.is-bottom {
+    width: 50%;
+    height: 25%;
+  }
+  &.is-left,
+  &.is-right {
+    width: 25%;
+    height: 50%;
+  }
+}
+
+.play-mat {
+  background: rgba(green, 0.1);
+  position: absolute;
+  width: 50%;
+  height: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }

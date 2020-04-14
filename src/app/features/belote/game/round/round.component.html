@@ -1,45 +1,53 @@
+<button (click)="reset()" *ngIf="isDev">reset</button>
+
 <ng-container *ngIf="game$ | async as game">
-  <div
-    class="player"
-    [ngClass]="'is-' + positions[i]"
-    *ngFor="let player of game.players; let i = index; let isFirst = first"
-  >
+  <div class="player" [ngClass]="'is-' + positions[i]" *ngFor="let player of game.players; let i = index; let isFirst = first">
     {{ player.pseudo }}
     <mat-icon *ngIf="player.isFirst">looks_one</mat-icon>
     <mat-icon *ngIf="game.turnTo === player.id">location_on</mat-icon>
+    <span class="is-atout" *ngIf="game.whoTook === player.id">{{ game.atout }}</span>
 
     <div
       class="hand"
       *ngIf="isFirst"
       cdkDropList
       cdkDropListOrientation="horizontal"
+      [cdkDropListConnectedTo]="playMat"
       (cdkDropListDropped)="drop($event, game)"
     >
-      <div class="card" [ngClass]="card" *ngFor="let card of player.hand" cdkDrag>
-        <div class="corner top left">
-          <div class="value">{{ card.split(" ")[0] }}</div>
-          <div class="color">{{ card.split(" ")[1] }}</div>
-        </div>
-        <div class="corner top right">
-          <div class="value">{{ card.split(" ")[0] }}</div>
-          <div class="color">{{ card.split(" ")[1] }}</div>
-        </div>
-        <div class="corner bottom left">
-          <div class="value">{{ card.split(" ")[0] }}</div>
-          <div class="color">{{ card.split(" ")[1] }}</div>
-        </div>
-        <div class="corner bottom right">
-          <div class="value">{{ card.split(" ")[0] }}</div>
-          <div class="color">{{ card.split(" ")[1] }}</div>
-        </div>
-        <span class="center">{{ card }}</span>
-      </div>
+      <ng-container *ngIf="player.handWithClues">
+        <app-card
+          class="mat-elevation-z4"
+          [ngClass]="card.value"
+          [class.is-not-playable]="!card.isPlayable"
+          [card]="card.value"
+          *ngFor="let card of player.handWithClues; let i = index"
+          cdkDrag
+        ></app-card>
+      </ng-container>
+      <ng-container *ngIf="!player.handWithClues">
+        <app-card class="mat-elevation-z4" [ngClass]="card" [card]="card" *ngFor="let card of player.hand" cdkDrag></app-card>
+      </ng-container>
     </div>
   </div>
 
-  <div class="play-mat">
-    <div class="bid" *ngIf="game.draw.length === 12">
+  <div class="play-mat" cdkDropList #playMat="cdkDropList" (cdkDropListDropped)="drop($event, game)">
+    <div class="bid" *ngIf="game.draw?.length === 12">
       {{ game.draw[0] }}
+    </div>
+
+    <div class="played-cards" *ngIf="getPlayedCards(game) as playedCards">
+      <ng-container *ngFor="let playedCard of playedCards; let isFirst = first">
+        <app-card
+          class="mat-elevation-z4"
+          [ngClass]="playedCard.value + ' is-' + playedCard.position"
+          [card]="playedCard.value"
+          [style.z-index]="playedCard.rank"
+          *ngIf="playedCard.value"
+        ></app-card>
+
+        <button *ngIf="isFirst && playedCard.isBest && playedCards?.length === 4">Ramasser</button>
+      </ng-container>
     </div>
   </div>
 </ng-container>

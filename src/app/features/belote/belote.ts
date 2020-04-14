@@ -3,12 +3,15 @@ import { firestore } from 'firebase/app';
 export interface Belote {
   created: firestore.Timestamp;
   players?: Player[];
-  scores: any; // todo score
+  scores: Stats; // todo score
   turnTo: string;
-  chosenColor: BeloteColor;
+  atout: BeloteColor;
+  requestedColor: BeloteColor;
   isSecondBid;
   hasBeenCut: boolean;
+  whoTook: string;
   draw: string[];
+  bestCardIndex?: number;
 }
 
 export type BeloteColor = '♥' | '♦' | '♣' | '♠';
@@ -51,4 +54,15 @@ export interface Player {
   ready: boolean;
   isFirst?: boolean;
   hand: string[];
+  handWithClues?: { value: string, isPlayable }[];
+  playedCard?: string;
+}
+
+export interface Stats {
+  // todo
+}
+
+export interface PreviousTurn {
+  cards: string[];
+  winnerId: string;
 }

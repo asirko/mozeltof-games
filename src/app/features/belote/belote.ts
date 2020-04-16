@@ -11,7 +11,7 @@ export interface Belote {
   hasBeenCut: boolean;
   whoTook: string;
   draw: string[];
-  bestCardIndex?: number;
+  pastTurns: PastTurn[];
 }
 
 export type BeloteColor = '♥' | '♦' | '♣' | '♠';
@@ -54,7 +54,7 @@ export interface Player {
   ready: boolean;
   isFirst?: boolean;
   hand: string[];
-  handWithClues?: { value: string, isPlayable }[];
+  handWithClues?: { value: string; isPlayable }[];
   playedCard?: string;
 }
 
@@ -62,7 +62,7 @@ export interface Stats {
   // todo
 }
 
-export interface PreviousTurn {
+export interface PastTurn {
   cards: string[];
   winnerId: string;
 }

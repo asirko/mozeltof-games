@@ -40,7 +40,7 @@ export class BeloteService implements CanActivate {
             hand: [],
           });
         }
-        return fromPromise(this.fireGame.update({ players })).pipe(mapTo(true));
+        return fromPromise(this.fireGame.update({ players, pastTurns: [] })).pipe(mapTo(true));
       }),
     );
   }
@@ -101,7 +101,7 @@ export class BeloteService implements CanActivate {
     // else player has no cards of requested color
     const playerAtout = playerHand.filter(predicateColor(requestedColor));
     const isAllyMaster = this.getBestCardIndex(playedCards, requestedColor, atout) === 2;
-    if (playerAtout.length === 0 || isAllyMaster) {
+    if (playerAtout.length === 0 || (isAllyMaster && requestedColor !== atout)) {
       return [...playerHand];
     } else {
       return getBiggerAtoutsOrAll(playedCards, playerAtout, atout);
@@ -112,7 +112,6 @@ export class BeloteService implements CanActivate {
     const playedAtouts = playedCard.filter(predicateColor(atout));
     if (playedAtouts.length) {
       const bestAtout = maxCard(playedAtouts, { isAtout: true });
-      console.log(bestAtout);
       return playedCard.indexOf(bestAtout);
     }
     const playedRequestedColor = playedCard.filter(predicateColor(requestedColor));

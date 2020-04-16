@@ -9,9 +9,10 @@ import { FirstBidComponent } from './modals/first-bid.component';
 import { SecondBidComponent } from './modals/second-bid.component';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { CardModule } from './card/card.module';
+import { LastTurnComponent } from './modals/last-turn.component';
 
 @NgModule({
-  declarations: [RoundComponent, DistributeComponent, FirstBidComponent, SecondBidComponent],
+  declarations: [RoundComponent, DistributeComponent, FirstBidComponent, SecondBidComponent, LastTurnComponent],
   imports: [CommonModule, MatDialogModule, MatButtonModule, MatIconModule, DragDropModule, CardModule],
   exports: [RoundComponent],
 })

@@ -1,6 +1,7 @@
 <ng-container *ngIf="game$ | async as game">
   <div class="controls">
     <button mat-button color="primary" (click)="reset()" *ngIf="isDev">reset</button>
+    <button mat-button color="primary" (click)="test()" *ngIf="isDev">test</button>
     <button *ngIf="game?.pastTurns?.length" mat-raised-button color="primary" (click)="seeLastTurn(game)">Voir le dernier pli</button>
   </div>
 
@@ -53,7 +54,7 @@
           mat-raised-button
           color="primary"
           *ngIf="isFirst && playedCard.isBest && playedCards?.length === 4"
-          (click)="takePlayedCards(game)"
+          (click)="takePlayedCards(playedCards, game)"
         >
           Ramasser
         </button>

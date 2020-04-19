@@ -1,16 +1,17 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, ViewChild } from '@angular/core';
 import { BeloteService } from '../../belote.service';
-import { map, tap } from 'rxjs/operators';
+import { filter, map, takeUntil, tap } from 'rxjs/operators';
 import { PLAYER_ID_KEY } from '../../../../shared/pseudo/pseudo.guard';
-import { Belote, BeloteColor, PastTurn, Player } from '../../belote';
-import { Observable, Subscription } from 'rxjs';
-import { MatDialog } from '@angular/material/dialog';
+import { Belote, BeloteColor, PastAction, PastTurn, Player } from '../../belote';
+import { Observable, Subject } from 'rxjs';
+import { MatDialog, MatDialogRef, MatDialogState } from '@angular/material/dialog';
 import { DistributeComponent } from './modals/distribute.component';
 import { FirstBidComponent } from './modals/first-bid.component';
 import { SecondBidComponent } from './modals/second-bid.component';
 import { CdkDragDrop, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
 import { environment } from '../../../../../environments/environment';
 import { LastTurnComponent } from './modals/last-turn.component';
+import { TestService } from '../../test.service';
 
 @Component({
   selector: 'app-round',
@@ -19,8 +20,8 @@ import { LastTurnComponent } from './modals/last-turn.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RoundComponent implements OnDestroy {
-  private dialogDistributionSub: Subscription;
-  private dialogFirstBidSub: Subscription;
+  private dialogDistributionRef: MatDialogRef<any>;
+  private dialogFirstBidRef: MatDialogRef<any>;
   private currentPlayerId = localStorage.getItem(PLAYER_ID_KEY);
   readonly isDev = !environment.production;
 
@@ -30,6 +31,7 @@ export class RoundComponent implements OnDestroy {
     tap(game => this.initGame(game)),
     map(game => this.reorderForDisplay(game)),
     map(game => this.addHandWithClues(game)),
+    tap(console.log),
     tap(game => this.manageDistribution(game)),
     tap(game => this.manageBid(game)),
     tap(game => this.manageSecondDistribution(game)),
@@ -37,15 +39,17 @@ export class RoundComponent implements OnDestroy {
 
   @ViewChild('playMat', { read: CdkDropList }) playMatElement: CdkDropList;
 
-  constructor(private beloteService: BeloteService, private matDialog: MatDialog) {}
+  private readonly destroy$ = new Subject();
+
+  constructor(private beloteService: BeloteService, private matDialog: MatDialog, private testService: TestService) {}
 
   ngOnDestroy(): void {
-    this.dialogDistributionSub?.unsubscribe();
-    this.dialogFirstBidSub?.unsubscribe();
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   private initGame(game: Belote) {
-    const noCards = !game.draw?.length && !game.players.some(p => p.hand?.length > 0);
+    const noCards = !game.draw?.length && !game.players.some(p => p.hand?.length > 0) && !game.pastTurns?.length;
     if (noCards && game.players[0].id === this.currentPlayerId) {
       console.info('init game', this.currentPlayerId);
       this.beloteService.initGame(this.currentPlayerId).subscribe();
@@ -81,11 +85,16 @@ export class RoundComponent implements OnDestroy {
 
   private manageDistribution(game: Belote) {
     // todo before to distribute cards it need to cut the deck
-    const modalOpened = this.dialogDistributionSub && !this.dialogDistributionSub.closed;
-    if (game.turnTo === this.currentPlayerId && game.draw.length === 32 && !modalOpened) {
-      this.dialogDistributionSub = this.matDialog
-        .open(DistributeComponent, { width: '250px', disableClose: true })
+    const modalOpened = this.dialogDistributionRef?.getState() === MatDialogState.OPEN;
+    const isDistributionStep = game.turnTo === this.currentPlayerId && game.draw.length === 32;
+    if (isDistributionStep && !modalOpened) {
+      this.dialogDistributionRef = this.matDialog.open(DistributeComponent, { width: '250px', disableClose: true });
+      this.dialogDistributionRef
         .afterClosed()
+        .pipe(
+          takeUntil(this.destroy$),
+          filter(distribution => distribution !== undefined),
+        )
         .subscribe((distribution: [number, number]) => {
           const draw = [...game.draw];
           const players: Player[] = game.players.map(p => ({ ...p, hand: [] }));
@@ -99,33 +108,36 @@ export class RoundComponent implements OnDestroy {
           });
           this.beloteService.updateGame({ draw, players, turnTo: players[1].id, isSecondBid: false });
         });
+    } else if (!isDistributionStep && modalOpened) {
+      this.dialogDistributionRef.close(undefined);
     }
   }
 
   private manageBid(game: Belote) {
-    const modalOpened = this.dialogFirstBidSub && !this.dialogFirstBidSub.closed;
-    if (game.draw?.length === 12 && game.turnTo === this.currentPlayerId && !modalOpened) {
+    const modalOpened = this.dialogFirstBidRef?.getState() === MatDialogState.OPEN;
+    const isTimeToBid = game.draw?.length === 12 && game.turnTo === this.currentPlayerId;
+    if (isTimeToBid && !modalOpened) {
       const bidComponent = game.isSecondBid ? SecondBidComponent : FirstBidComponent;
       const firstColor = game.draw[0][game.draw[0].length - 1] as BeloteColor;
-      this.dialogFirstBidSub = this.matDialog
-        .open(bidComponent, { width: '250px', disableClose: true, data: firstColor })
-        .afterClosed()
-        .subscribe(chosenColor => {
-          if (chosenColor) {
-            const [firstCard, ...draw] = game.draw;
-            const players: Player[] = game.players.map(p => ({ ...p, hand: [...p.hand] }));
-            players[0].hand.push(firstCard);
-            this.beloteService.updateGame({ draw, players, atout: chosenColor, whoTook: players[0].id });
-          } else {
-            const nextPlayer = game.players[1];
-            if (game.isSecondBid && nextPlayer.isFirst) {
-              this.noOneTookIt(game);
-              return;
-            }
-            const isSecondBid = game.isSecondBid || nextPlayer.isFirst;
-            this.beloteService.updateGame({ turnTo: nextPlayer.id, isSecondBid });
+      this.dialogFirstBidRef = this.matDialog.open(bidComponent, { width: '250px', disableClose: true, data: firstColor });
+      this.dialogFirstBidRef.afterClosed().subscribe(chosenColor => {
+        if (chosenColor) {
+          const [firstCard, ...draw] = game.draw;
+          const players: Player[] = game.players.map(p => ({ ...p, hand: [...p.hand] }));
+          players[0].hand.push(firstCard);
+          this.beloteService.updateGame({ draw, players, atout: chosenColor, whoTook: players[0].id });
+        } else if (chosenColor === null) {
+          const nextPlayer = game.players[1];
+          if (game.isSecondBid && nextPlayer.isFirst) {
+            this.noOneTookIt(game);
+            return;
           }
-        });
+          const isSecondBid = game.isSecondBid || nextPlayer.isFirst;
+          this.beloteService.updateGame({ turnTo: nextPlayer.id, isSecondBid });
+        }
+      });
+    } else if (!isTimeToBid && modalOpened) {
+      this.dialogFirstBidRef.close(undefined);
     }
   }
 
@@ -163,10 +175,10 @@ export class RoundComponent implements OnDestroy {
     } else if (event.container === this.playMatElement && game.turnTo === this.currentPlayerId && !currentPlayer.playedCard) {
       // checked first if the card is playable
       if (currentPlayer.handWithClues[event.previousIndex].isPlayable) {
-        currentPlayer.playedCard = currentPlayer.hand.splice(event.previousIndex, 1)[0];
-        currentPlayer.handWithClues = null;
         const isFirstCardPlayed = players.every(p => !p.playedCard);
+        currentPlayer.playedCard = currentPlayer.hand.splice(event.previousIndex, 1)[0];
         const requestedColor = isFirstCardPlayed ? (currentPlayer.playedCard.split(' ')[1] as BeloteColor) : game.requestedColor;
+        currentPlayer.handWithClues = null;
         this.beloteService.updateGame({ players, turnTo: !players[1].playedCard ? players[1].id : players[0].id, requestedColor });
       }
     }
@@ -176,7 +188,7 @@ export class RoundComponent implements OnDestroy {
     this.beloteService.initGame(this.currentPlayerId).subscribe();
   }
 
-  getPlayedCards(game: Belote): { value: string; rank: number; position: string; isBest: boolean }[] {
+  getPlayedCards(game: Belote): { value: string; rank: number; position: string; isBest: boolean; pseudo: string }[] {
     if (game.players.every(p => !p.playedCard)) {
       return null;
     }
@@ -189,6 +201,7 @@ export class RoundComponent implements OnDestroy {
     return game.players
       .map((p, i) => ({
         value: p.playedCard,
+        pseudo: p.pseudo,
         rank: currentPlayerIndex >= i ? 4 - (currentPlayerIndex - i) : i - currentPlayerIndex,
         position: this.positions[i],
         isBest: i === bestCardIndex,
@@ -196,18 +209,24 @@ export class RoundComponent implements OnDestroy {
       .filter(pc => pc.value);
   }
 
-  takePlayedCards(game: Belote) {
-    const players: Player[] = game.players.map(p => ({ ...p, hand: [...p.hand] }));
-    const playedCards = players.map(p => {
-      const playedCard = p.playedCard;
-      p.playedCard = null;
-      return playedCard;
-    });
-    const pastTurns: PastTurn[] = [...game.pastTurns, { cards: playedCards, winnerId: this.currentPlayerId }];
+  takePlayedCards(playedCards: { value: string; rank: number; position: string; isBest: boolean; pseudo: string }[], game: Belote) {
+    const players: Player[] = game.players.map(p => ({ ...p, hand: [...p.hand], playedCard: null }));
+    const cards: PastAction[] = playedCards
+      .sort((a, b) => a.rank - b.rank)
+      .map(pc => ({
+        hasWon: pc.isBest,
+        pseudo: pc.pseudo,
+        value: pc.value,
+      }));
+    const pastTurns: PastTurn[] = [...game.pastTurns, { cards }];
     this.beloteService.updateGame({ players, pastTurns, turnTo: this.currentPlayerId });
   }
 
   seeLastTurn(game: Belote) {
-    this.matDialog.open(LastTurnComponent, { width: '250px', data: game.pastTurns[game.pastTurns.length - 1] });
+    this.matDialog.open(LastTurnComponent, { width: '550px', data: game.pastTurns[game.pastTurns.length - 1] });
+  }
+
+  test() {
+    this.beloteService.updateGame(this.testService.getBeforeEnd());
   }
 }

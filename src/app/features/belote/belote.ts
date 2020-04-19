@@ -63,6 +63,11 @@ export interface Stats {
 }
 
 export interface PastTurn {
-  cards: string[];
-  winnerId: string;
+  cards: PastAction[];
+}
+
+export interface PastAction {
+  value: string;
+  pseudo: string;
+  hasWon: boolean;
 }

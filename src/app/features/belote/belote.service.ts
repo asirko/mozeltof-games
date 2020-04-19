@@ -40,7 +40,7 @@ export class BeloteService implements CanActivate {
             hand: [],
           });
         }
-        return fromPromise(this.fireGame.update({ players, pastTurns: [] })).pipe(mapTo(true));
+        return fromPromise(this.fireGame.update({ players })).pipe(mapTo(true));
       }),
     );
   }
@@ -76,6 +76,7 @@ export class BeloteService implements CanActivate {
           isSecondBid: false,
           hasBeenCut: false,
           whoTook: null,
+          pastTurns: [],
         }),
       ),
     );
@@ -91,7 +92,6 @@ export class BeloteService implements CanActivate {
     }
 
     const playerCardsOfRequestedColor = playerHand.filter(predicateColor(requestedColor));
-
     if (playerCardsOfRequestedColor.length && requestedColor !== atout) {
       return playerCardsOfRequestedColor;
     } else if (playerCardsOfRequestedColor.length && requestedColor === atout) {
@@ -99,7 +99,7 @@ export class BeloteService implements CanActivate {
     }
 
     // else player has no cards of requested color
-    const playerAtout = playerHand.filter(predicateColor(requestedColor));
+    const playerAtout = playerHand.filter(predicateColor(atout));
     const isAllyMaster = this.getBestCardIndex(playedCards, requestedColor, atout) === 2;
     if (playerAtout.length === 0 || (isAllyMaster && requestedColor !== atout)) {
       return [...playerHand];
@@ -145,8 +145,8 @@ function getBiggerAtoutsOrAll(playedCards: string[], playerAtouts: string[], ato
   if (!playedAtouts?.length) {
     return playerAtouts;
   }
-  const bestPlayedAtouts = maxCard(playedAtouts, { isAtout: true });
-  const betterAtouts = playerAtouts.filter(c => compareValueCards(bestPlayedAtouts, c.split(' ')[0], { isAtout: true }) < 0);
+  const bestPlayedAtoutsValue = maxCard(playedAtouts, { isAtout: true }).split(' ')[0];
+  const betterAtouts = playerAtouts.filter(c => compareValueCards(bestPlayedAtoutsValue, c.split(' ')[0], { isAtout: true }) < 0);
   return betterAtouts.length ? betterAtouts : playerAtouts;
 }
 

@@ -176,25 +176,28 @@ export class RoundComponent implements OnDestroy {
   drop(event: CdkDragDrop<string, any>, game: Belote) {
     const players: Player[] = game.players.map(p => ({ ...p, hand: [...p.hand] }));
     const currentPlayer = players.find(p => p.id === this.currentPlayerId);
+    const currentPlayerPlayedValidCard =
+      !game.draw?.length &&
+      event.container === this.playMatElement &&
+      game.turnTo === this.currentPlayerId &&
+      !currentPlayer.playedCard &&
+      currentPlayer.handWithClues[event.previousIndex].isPlayable;
+
     if (event.previousContainer === event.container) {
       // reorder its own game
       moveItemInArray(players[0].hand, event.previousIndex, event.currentIndex);
       moveItemInArray(game.players[0].hand, event.previousIndex, event.currentIndex);
       this.beloteService.updateGame({ players });
-    } else if (
-      !game.draw?.length &&
-      event.container === this.playMatElement &&
-      game.turnTo === this.currentPlayerId &&
-      !currentPlayer.playedCard
-    ) {
-      // checked first if the card is playable
-      if (currentPlayer.handWithClues[event.previousIndex].isPlayable) {
-        const isFirstCardPlayed = players.every(p => !p.playedCard);
-        currentPlayer.playedCard = currentPlayer.hand.splice(event.previousIndex, 1)[0];
-        const requestedColor = isFirstCardPlayed ? (currentPlayer.playedCard.split(' ')[1] as BeloteColor) : game.requestedColor;
-        currentPlayer.handWithClues = null;
-        this.beloteService.updateGame({ players, turnTo: !players[1].playedCard ? players[1].id : players[0].id, requestedColor });
-      }
+    } else if (currentPlayerPlayedValidCard) {
+      const isFirstCardPlayed = players.every(p => !p.playedCard);
+      const belote = ['Q ' + game.atout, 'K ' + game.atout];
+      const hasBelote = belote.every(b => currentPlayer.hand.includes(b));
+      currentPlayer.playedCard = currentPlayer.hand.splice(event.previousIndex, 1)[0];
+      const isBelote = hasBelote && belote.includes(currentPlayer.playedCard);
+      const beloteFor = isBelote ? currentPlayer.id : game.beloteFor;
+      const requestedColor = isFirstCardPlayed ? (currentPlayer.playedCard.split(' ')[1] as BeloteColor) : game.requestedColor;
+      currentPlayer.handWithClues = null;
+      this.beloteService.updateGame({ players, turnTo: !players[1].playedCard ? players[1].id : players[0].id, requestedColor, beloteFor });
     }
   }
 

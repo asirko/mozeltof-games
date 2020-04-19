@@ -60,7 +60,7 @@ export class BeloteService implements CanActivate {
   initGame(playerId: string): Observable<any> {
     return this.fireGame.valueChanges().pipe(
       first(),
-      tap(game =>
+      tap((game: Belote) =>
         this.fireGame.update({
           draw: getRandomDeck(),
           turnTo: playerId,
@@ -77,6 +77,18 @@ export class BeloteService implements CanActivate {
           hasBeenCut: false,
           whoTook: null,
           pastTurns: [],
+          stats: {
+            team1: {
+              id: [game.players[0].id, game.players[2].id],
+              name: [game.players[0].pseudo, game.players[2].pseudo],
+              score: [],
+            },
+            team2: {
+              id: [game.players[1].id, game.players[3].id],
+              name: [game.players[1].pseudo, game.players[3].pseudo],
+              score: [],
+            },
+          },
         }),
       ),
     );
@@ -118,6 +130,39 @@ export class BeloteService implements CanActivate {
     const bestCard = maxCard(playedRequestedColor);
     return playedCard.indexOf(bestCard);
   }
+
+  calculateTurnScore(game: Belote) {
+    const team1Cards = game.pastTurns
+      .filter(turn => game.stats.team1.id.includes(turn.cards.find(c => c.hasWon).id))
+      .map(c => c.cards)
+      .reduce((flat, arr) => flat.concat(arr), [])
+      .map(c => c.value);
+    const team2Cards = game.pastTurns
+      .filter(turn => game.stats.team2.id.includes(turn.cards.find(c => c.hasWon).id))
+      .map(c => c.cards)
+      .reduce((flat, arr) => flat.concat(arr), [])
+      .map(c => c.value);
+    const team1GainedPoints = calculateCardsValue(team1Cards, game.atout);
+    const team2GainedPoints = calculateCardsValue(team2Cards, game.atout);
+    const lastWinnerId = game.pastTurns[game.pastTurns.length - 1].cards.find(c => c.hasWon).id;
+    const team1WonLast = game.stats.team1.id.includes(lastWinnerId);
+    const team1Score = team1WonLast ? team1GainedPoints + 10 : team1GainedPoints;
+    const team2Score = !team1WonLast ? team2GainedPoints + 10 : team2GainedPoints;
+    return this.updateGame({
+      stats: {
+        team1: { ...game.stats.team1, score: [...game.stats.team1.score, team1Score] },
+        team2: { ...game.stats.team2, score: [...game.stats.team2.score, team2Score] },
+      },
+      pastTurns: [],
+      requestedColor: null,
+      atout: null,
+      isSecondBid: false,
+      hasBeenCut: false,
+      whoTook: null,
+      draw: Math.random() >= 0.5 ? team1Cards.concat(team2Cards) : team2Cards.concat(team1Cards),
+      turnTo: game.players.find(p => p.isFirst).id,
+    });
+  }
 }
 
 function compareValueCards(valueA: string, valueB: string, options: { isAtout?: boolean } = {}): number {
@@ -152,4 +197,36 @@ function getBiggerAtoutsOrAll(playedCards: string[], playerAtouts: string[], ato
 
 function predicateColor(color: BeloteColor): (card: string) => boolean {
   return card => card?.split(' ')[1] === color;
+}
+
+function calculateCardValue(card: string, atout: BeloteColor): number {
+  const classicValues = [
+    { value: '7', point: 0 },
+    { value: '8', point: 0 },
+    { value: '9', point: 0 },
+    { value: 'J', point: 2 },
+    { value: 'Q', point: 3 },
+    { value: 'K', point: 4 },
+    { value: '10', point: 10 },
+    { value: 'A', point: 11 },
+  ];
+  const atoutValues = [
+    { value: '7', point: 0 },
+    { value: '8', point: 0 },
+    { value: 'Q', point: 3 },
+    { value: 'K', point: 4 },
+    { value: '10', point: 10 },
+    { value: 'A', point: 11 },
+    { value: '9', point: 14 },
+    { value: 'J', point: 20 },
+  ];
+  const [value, color] = card.split(' ');
+  const values = color === atout ? atoutValues : classicValues;
+  return values.find(v => v.value === value).point;
+}
+
+function calculateCardsValue(cards: string[], atout: BeloteColor): number {
+  return cards //
+    .map(c => calculateCardValue(c, atout))
+    .reduce((points, point) => points + point, 0);
 }

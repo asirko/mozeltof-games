@@ -3,7 +3,7 @@ import { firestore } from 'firebase/app';
 export interface Belote {
   created: firestore.Timestamp;
   players?: Player[];
-  scores: Stats; // todo score
+  scores: BeloteStats; // todo score
   turnTo: string;
   atout: BeloteColor;
   requestedColor: BeloteColor;
@@ -12,6 +12,7 @@ export interface Belote {
   whoTook: string;
   draw: string[];
   pastTurns: PastTurn[];
+  stats: BeloteStats;
 }
 
 export type BeloteColor = '♥' | '♦' | '♣' | '♠';
@@ -58,8 +59,14 @@ export interface Player {
   playedCard?: string;
 }
 
-export interface Stats {
-  // todo
+export interface BeloteStats {
+  team1: Team;
+  team2: Team;
+}
+export interface Team {
+  name: string[];
+  id: string[];
+  score: number[];
 }
 
 export interface PastTurn {
@@ -70,4 +77,5 @@ export interface PastAction {
   value: string;
   pseudo: string;
   hasWon: boolean;
+  id: string;
 }

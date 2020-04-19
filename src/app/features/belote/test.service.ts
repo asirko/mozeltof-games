@@ -14,20 +14,24 @@ export class TestService {
             {
               value: 'J ♦',
               pseudo: 'a',
+              id: 'wCTCSC8cDJ6nFTSdZKQV',
               hasWon: false,
             },
             {
               value: 'A ♦',
+              id: 'zHB6WAqrMA2wK7qf4bfW',
               pseudo: 'firefox',
               hasWon: true,
             },
             {
+              id: 'j0J9UrLS2JiYGGxXtVZX',
               pseudo: 'z',
               hasWon: false,
               value: '8 ♦',
             },
             {
               value: '7 ♦',
+              id: 'lhinzb1jv8BvwtTZ2Nyt',
               pseudo: 'Chrome',
               hasWon: false,
             },
@@ -38,20 +42,24 @@ export class TestService {
             {
               hasWon: false,
               value: '10 ♣',
+              id: 'zHB6WAqrMA2wK7qf4bfW',
               pseudo: 'firefox',
             },
             {
               value: '8 ♣',
+              id: 'j0J9UrLS2JiYGGxXtVZX',
               pseudo: 'z',
               hasWon: false,
             },
             {
+              id: 'lhinzb1jv8BvwtTZ2Nyt',
               pseudo: 'Chrome',
               hasWon: true,
               value: 'J ♣',
             },
             {
               pseudo: 'a',
+              id: 'wCTCSC8cDJ6nFTSdZKQV',
               hasWon: false,
               value: '7 ♣',
             },
@@ -60,6 +68,7 @@ export class TestService {
         {
           cards: [
             {
+              id: 'lhinzb1jv8BvwtTZ2Nyt',
               pseudo: 'Chrome',
               hasWon: true,
               value: '9 ♣',
@@ -68,14 +77,17 @@ export class TestService {
               hasWon: false,
               value: 'K ♣',
               pseudo: 'a',
+              id: 'wCTCSC8cDJ6nFTSdZKQV',
             },
             {
               hasWon: false,
               value: 'Q ♦',
+              id: 'zHB6WAqrMA2wK7qf4bfW',
               pseudo: 'firefox',
             },
             {
               value: '9 ♥',
+              id: 'j0J9UrLS2JiYGGxXtVZX',
               pseudo: 'z',
               hasWon: false,
             },
@@ -85,6 +97,7 @@ export class TestService {
           cards: [
             {
               value: 'A ♥',
+              id: 'lhinzb1jv8BvwtTZ2Nyt',
               pseudo: 'Chrome',
               hasWon: true,
             },
@@ -92,15 +105,18 @@ export class TestService {
               hasWon: false,
               value: 'Q ♥',
               pseudo: 'a',
+              id: 'wCTCSC8cDJ6nFTSdZKQV',
             },
             {
               hasWon: false,
               value: '8 ♥',
+              id: 'zHB6WAqrMA2wK7qf4bfW',
               pseudo: 'firefox',
             },
             {
               hasWon: false,
               value: 'K ♥',
+              id: 'j0J9UrLS2JiYGGxXtVZX',
               pseudo: 'z',
             },
           ],
@@ -109,6 +125,7 @@ export class TestService {
           cards: [
             {
               value: 'A ♠',
+              id: 'lhinzb1jv8BvwtTZ2Nyt',
               pseudo: 'Chrome',
               hasWon: true,
             },
@@ -116,13 +133,16 @@ export class TestService {
               hasWon: false,
               value: 'J ♠',
               pseudo: 'a',
+              id: 'wCTCSC8cDJ6nFTSdZKQV',
             },
             {
               hasWon: false,
               value: '9 ♠',
+              id: 'zHB6WAqrMA2wK7qf4bfW',
               pseudo: 'firefox',
             },
             {
+              id: 'j0J9UrLS2JiYGGxXtVZX',
               pseudo: 'z',
               hasWon: false,
               value: 'Q ♠',
@@ -133,22 +153,26 @@ export class TestService {
           cards: [
             {
               value: '10 ♠',
+              id: 'lhinzb1jv8BvwtTZ2Nyt',
               pseudo: 'Chrome',
               hasWon: false,
             },
             {
               value: 'A ♣',
               pseudo: 'a',
+              id: 'wCTCSC8cDJ6nFTSdZKQV',
               hasWon: true,
             },
             {
               hasWon: false,
               value: '7 ♠',
+              id: 'zHB6WAqrMA2wK7qf4bfW',
               pseudo: 'firefox',
             },
             {
               hasWon: false,
               value: 'K ♠',
+              id: 'j0J9UrLS2JiYGGxXtVZX',
               pseudo: 'z',
             },
           ],
@@ -159,20 +183,24 @@ export class TestService {
               hasWon: false,
               value: '10 ♦',
               pseudo: 'a',
+              id: 'wCTCSC8cDJ6nFTSdZKQV',
             },
             {
               hasWon: false,
               value: '7 ♥',
+              id: 'zHB6WAqrMA2wK7qf4bfW',
               pseudo: 'firefox',
             },
             {
               value: 'K ♦',
+              id: 'j0J9UrLS2JiYGGxXtVZX',
               pseudo: 'z',
               hasWon: false,
             },
             {
               hasWon: true,
               value: 'Q ♣',
+              id: 'lhinzb1jv8BvwtTZ2Nyt',
               pseudo: 'Chrome',
             },
           ],
@@ -223,6 +251,18 @@ export class TestService {
       draw: [],
       isSecondBid: false,
       requestedColor: '♠',
+      stats: {
+        team1: {
+          id: ['wCTCSC8cDJ6nFTSdZKQV', 'j0J9UrLS2JiYGGxXtVZX'],
+          name: ['a', 'z'],
+          score: [],
+        },
+        team2: {
+          id: ['zHB6WAqrMA2wK7qf4bfW', 'lhinzb1jv8BvwtTZ2Nyt'],
+          name: ['firefox', 'Chrome'],
+          score: [],
+        },
+      },
     };
   }
 }

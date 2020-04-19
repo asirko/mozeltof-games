@@ -11,6 +11,8 @@ export interface Belote {
   hasBeenCut: boolean;
   whoTook: string;
   draw: string[];
+  litige: number;
+  beloteFor: string;
   pastTurns: PastTurn[];
   stats: BeloteStats;
 }

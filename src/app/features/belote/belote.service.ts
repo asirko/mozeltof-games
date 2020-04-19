@@ -76,6 +76,7 @@ export class BeloteService implements CanActivate {
           isSecondBid: false,
           hasBeenCut: false,
           whoTook: null,
+          litige: 0,
           pastTurns: [],
           stats: {
             team1: {
@@ -142,12 +143,64 @@ export class BeloteService implements CanActivate {
       .map(c => c.cards)
       .reduce((flat, arr) => flat.concat(arr), [])
       .map(c => c.value);
-    const team1GainedPoints = calculateCardsValue(team1Cards, game.atout);
-    const team2GainedPoints = calculateCardsValue(team2Cards, game.atout);
+    let team1Score = calculateCardsValue(team1Cards, game.atout);
+    let team2Score = calculateCardsValue(team2Cards, game.atout);
     const lastWinnerId = game.pastTurns[game.pastTurns.length - 1].cards.find(c => c.hasWon).id;
     const team1WonLast = game.stats.team1.id.includes(lastWinnerId);
-    const team1Score = team1WonLast ? team1GainedPoints + 10 : team1GainedPoints;
-    const team2Score = !team1WonLast ? team2GainedPoints + 10 : team2GainedPoints;
+    if (team1WonLast) {
+      team1Score += 10;
+    } else {
+      team2Score += 10;
+    }
+
+    if (game.beloteFor && game.stats.team1.id.includes(game.beloteFor)) {
+      team1Score += 20;
+    } else if (game.beloteFor && game.stats.team2.id.includes(game.beloteFor)) {
+      team2Score += 20;
+    }
+
+    if (!game.whoTook) {
+      throw new Error('game.whoTook empty');
+    }
+    const threshold = game.beloteFor ? 91 : 81;
+    let litige = 0;
+    if (game.stats.team1.id.includes(game.whoTook) && team1Score < threshold) {
+      team1Score = 0;
+      team2Score = 162 + game.litige;
+    } else if (game.stats.team2.id.includes(game.whoTook) && team2Score < threshold) {
+      team1Score = 162 + game.litige;
+      team2Score = 0;
+    } else if (game.stats.team1.id.includes(game.whoTook) && team1Score === threshold) {
+      team1Score = 0;
+      litige = threshold + game.litige;
+      if (game.beloteFor && game.stats.team1.id.includes(game.beloteFor)) {
+        team1Score += 20;
+        litige -= 20;
+      }
+    } else if (game.stats.team2.id.includes(game.whoTook) && team2Score === threshold) {
+      team2Score = 0;
+      litige = threshold + game.litige;
+      if (game.beloteFor && game.stats.team2.id.includes(game.beloteFor)) {
+        team2Score += 20;
+        litige -= 20;
+      }
+    } else if (game.stats.team1.id.includes(game.whoTook) && team1Score > threshold) {
+      team1Score += game.litige;
+    } else if (game.stats.team2.id.includes(game.whoTook) && team2Score > threshold) {
+      team2Score += game.litige;
+    }
+
+    if (team1Cards.length === 0) {
+      team2Score = 252 + game.litige;
+      if (game.beloteFor && game.stats.team2.id.includes(game.beloteFor)) {
+        team2Score += 20;
+      }
+    } else if (team2Cards.length === 0) {
+      team1Score = 252 + game.litige;
+      if (game.beloteFor && game.stats.team1.id.includes(game.beloteFor)) {
+        team2Score += 20;
+      }
+    }
     return this.updateGame({
       stats: {
         team1: { ...game.stats.team1, score: [...game.stats.team1.score, team1Score] },
@@ -158,7 +211,9 @@ export class BeloteService implements CanActivate {
       atout: null,
       isSecondBid: false,
       hasBeenCut: false,
+      beloteFor: null,
       whoTook: null,
+      litige,
       draw: Math.random() >= 0.5 ? team1Cards.concat(team2Cards) : team2Cards.concat(team1Cards),
       turnTo: game.players.find(p => p.isFirst).id,
     });

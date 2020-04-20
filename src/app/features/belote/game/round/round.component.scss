@@ -2,10 +2,20 @@
 
 :host {
   display: block;
+}
+.game {
+  display: block;
   height: 100vh;
   max-height: 800px;
   position: relative;
   background: rgba(blue, 0.1);
+}
+
+.bid {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .player {
@@ -61,6 +71,9 @@
 
 .hand {
   display: flex;
+  app-card {
+    margin-right: -50px;
+  }
 }
 
 .cdk-drag-placeholder {

@@ -5,9 +5,9 @@ import { BeloteColor } from '../../../belote';
 @Component({
   selector: 'app-first-bid',
   template: `
-    <app-card class="mat-elevation-z4" [ngClass]="data" [card]="data"></app-card>
-    <button mat-raised-button color="primary" [mat-dialog-close]="data">
-      Prendre à <span class="color">{{ data.split(' ')[1] }}</span>
+    <app-card class="mat-elevation-z4" [ngClass]="card" [card]="card"></app-card>
+    <button mat-raised-button color="primary" [mat-dialog-close]="color">
+      Prendre à <span class="color">{{ color }}</span>
     </button>
     <button mat-raised-button color="accent" [mat-dialog-close]="null">Passer</button>
   `,
@@ -36,5 +36,11 @@ import { BeloteColor } from '../../../belote';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FirstBidComponent {
-  constructor(@Inject(MAT_DIALOG_DATA) public data: BeloteColor) {}
+  readonly color;
+  readonly value;
+  readonly card;
+  constructor(@Inject(MAT_DIALOG_DATA) data: string) {
+    this.card = data;
+    [this.value, this.color] = data.split(' ');
+  }
 }

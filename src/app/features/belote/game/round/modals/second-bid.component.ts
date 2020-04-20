@@ -23,7 +23,7 @@ import { BeloteColor } from '../../../belote';
 })
 export class SecondBidComponent {
   readonly colorChoice: BeloteColor[];
-  constructor(@Inject(MAT_DIALOG_DATA) public data: BeloteColor) {
+  constructor(@Inject(MAT_DIALOG_DATA) data: BeloteColor) {
     this.colorChoice = ['♥', '♦', '♣', '♠'].filter(v => v !== data.split(' ')[1]) as BeloteColor[];
   }
 }

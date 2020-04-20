@@ -33,7 +33,7 @@ export class RoundComponent implements OnDestroy {
     tap(game => this.initGame(game)),
     map(game => this.reorderForDisplay(game)),
     map(game => this.addHandWithClues(game)),
-    tap(console.log),
+    tap(console.info),
     tap(game => this.manageDistribution(game)),
     tap(game => this.manageBid(game)),
     tap(game => this.manageSecondDistribution(game)),
@@ -213,7 +213,7 @@ export class RoundComponent implements OnDestroy {
       const hasBelote = belote.every(b => currentPlayer.hand.includes(b));
       currentPlayer.playedCard = currentPlayer.hand.splice(event.previousIndex, 1)[0];
       const isBelote = hasBelote && belote.includes(currentPlayer.playedCard);
-      const beloteFor = isBelote ? currentPlayer.id : game.beloteFor;
+      const beloteFor = isBelote ? currentPlayer.id : game.beloteFor || null;
       const requestedColor = isFirstCardPlayed ? (currentPlayer.playedCard.split(' ')[1] as BeloteColor) : game.requestedColor;
       currentPlayer.handWithClues = null;
       this.beloteService.updateGame({ players, turnTo: !players[1].playedCard ? players[1].id : players[0].id, requestedColor, beloteFor });

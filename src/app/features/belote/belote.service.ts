@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
-import { first, map, mapTo, switchMap, tap } from 'rxjs/operators';
+import { distinctUntilChanged, filter, first, map, mapTo, pairwise, switchMap, tap } from 'rxjs/operators';
 import { Belote, BeloteColor, getRandomDeck, Player } from './belote';
 import { PLAYER_ID_KEY, PSEUDO_KEY } from '../../shared/pseudo/pseudo.guard';
 import { fromPromise } from 'rxjs/internal-compatibility';
@@ -217,6 +217,29 @@ export class BeloteService implements CanActivate {
       draw: Math.random() >= 0.5 ? team1Cards.concat(team2Cards) : team2Cards.concat(team1Cards),
       turnTo: game.players.find(p => p.isFirst).id,
     });
+  }
+
+  getShowBelote$(): Observable<boolean> {
+    return this.fireGame.valueChanges().pipe(
+      pairwise(),
+      map(([prev, curr]) => !prev.beloteFor && !!curr.beloteFor),
+      distinctUntilChanged(),
+      filter(shouldShow => shouldShow),
+    );
+  }
+  getShowReBelote$(): Observable<boolean> {
+    return this.fireGame.valueChanges().pipe(
+      filter(game => !!game.beloteFor),
+      pairwise(),
+      map(([prev, curr]) => {
+        const playedCard = curr.players.map(p => p.playedCard);
+        const beloteCardPlayed = ['Q ' + curr.atout, 'K ' + curr.atout].find(b => playedCard.includes(b));
+        const wasInPrev = prev.players.map(p => p.playedCard).includes(beloteCardPlayed);
+        return !wasInPrev;
+      }),
+      distinctUntilChanged(),
+      filter(shouldShow => shouldShow),
+    );
   }
 }
 

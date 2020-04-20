@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, ViewChild } from '@angular/core';
 import { BeloteService } from '../../belote.service';
-import { filter, map, takeUntil, tap } from 'rxjs/operators';
+import { filter, map, mapTo, takeUntil, tap } from 'rxjs/operators';
 import { PLAYER_ID_KEY } from '../../../../shared/pseudo/pseudo.guard';
 import { Belote, BeloteColor, PastAction, PastTurn, Player } from '../../belote';
-import { Observable, Subject } from 'rxjs';
+import { merge, Observable, Subject } from 'rxjs';
 import { MatDialog, MatDialogRef, MatDialogState } from '@angular/material/dialog';
 import { DistributeComponent } from './modals/distribute.component';
 import { FirstBidComponent } from './modals/first-bid.component';
@@ -13,6 +13,7 @@ import { environment } from '../../../../../environments/environment';
 import { LastTurnComponent } from './modals/last-turn.component';
 import { TestService } from '../../test.service';
 import { StatsComponent } from './modals/stats.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-round',
@@ -43,7 +44,25 @@ export class RoundComponent implements OnDestroy {
 
   private readonly destroy$ = new Subject();
 
-  constructor(private beloteService: BeloteService, private matDialog: MatDialog, private testService: TestService) {}
+  constructor(
+    private beloteService: BeloteService,
+    private matDialog: MatDialog,
+    private testService: TestService,
+    private snackBar: MatSnackBar,
+  ) {
+    merge(
+      this.beloteService.getShowBelote$().pipe(mapTo('Belote !')), //
+      this.beloteService.getShowReBelote$().pipe(mapTo('Re-Belote !')),
+    )
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(label =>
+        this.snackBar.open(label, null, {
+          duration: 2000,
+          announcementMessage: '',
+          horizontalPosition: 'center',
+        }),
+      );
+  }
 
   ngOnDestroy(): void {
     this.destroy$.next();

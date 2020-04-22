@@ -6,10 +6,11 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { LastTurnModule } from './last-turn/last-turn.module';
+import { StatsModule } from './stats/stats.module';
 
 @NgModule({
   declarations: [DrawerComponent],
-  imports: [CommonModule, MatButtonModule, MatDialogModule, MatDividerModule, MatTooltipModule, LastTurnModule],
+  imports: [CommonModule, MatButtonModule, MatDialogModule, MatDividerModule, MatTooltipModule, LastTurnModule, StatsModule],
   exports: [DrawerComponent],
 })
 export class DrawerModule {}

@@ -9,13 +9,12 @@ import { FirstBidComponent } from './modals/first-bid.component';
 import { SecondBidComponent } from './modals/second-bid.component';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { CardModule } from './card/card.module';
-import { StatsComponent } from './modals/stats.component';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { DrawerModule } from './drawer/drawer.module';
 
 @NgModule({
-  declarations: [RoundComponent, DistributeComponent, FirstBidComponent, SecondBidComponent, StatsComponent],
+  declarations: [RoundComponent, DistributeComponent, FirstBidComponent, SecondBidComponent],
   imports: [
     CommonModule,
     MatDialogModule,

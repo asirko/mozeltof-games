@@ -1,5 +1,7 @@
 <app-last-turn [lastTurn]="game.pastTurns[game.pastTurns.length - 1]"></app-last-turn>
+<mat-divider></mat-divider>
 
+<app-stats [stats]="game.stats"></app-stats>
 <mat-divider></mat-divider>
 
 <ng-container *ngIf="isDev">

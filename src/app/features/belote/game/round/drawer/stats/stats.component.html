@@ -1,0 +1,16 @@
+<h3>Stastique sur les {{ stats.team1.score.length }} manches</h3>
+
+<table>
+  <tr>
+    <th>{{ stats.team1.name.join(" - ") }}</th>
+    <th>{{ stats.team2.name.join(" - ") }}</th>
+  </tr>
+  <tr *ngFor="let score of stats.team1.score; let i = index">
+    <td>{{ stats.team1.score[i] }}</td>
+    <td>{{ stats.team2.score[i] }}</td>
+  </tr>
+  <tr>
+    <th>{{ getTotal(stats.team1.score) }}</th>
+    <th>{{ getTotal(stats.team2.score) }}</th>
+  </tr>
+</table>

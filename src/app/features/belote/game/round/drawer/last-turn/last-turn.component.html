@@ -1,0 +1,8 @@
+<h3>Dernier tour</h3>
+
+<div class="cards">
+  <div class="card" *ngFor="let pa of lastTurn.cards">
+    <span>{{ pa.pseudo }} <mat-icon *ngIf="pa.hasWon">star</mat-icon></span>
+    <app-card [card]="pa.value" [ngClass]="pa.value" class="mat-elevation-z4"></app-card>
+  </div>
+</div>

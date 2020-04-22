@@ -9,10 +9,7 @@ import { DistributeComponent } from './modals/distribute.component';
 import { FirstBidComponent } from './modals/first-bid.component';
 import { SecondBidComponent } from './modals/second-bid.component';
 import { CdkDragDrop, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
-import { environment } from '../../../../../environments/environment';
-import { LastTurnComponent } from './modals/last-turn.component';
 import { TestService } from '../../test.service';
-import { StatsComponent } from './modals/stats.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
@@ -25,7 +22,6 @@ export class RoundComponent implements OnDestroy {
   private dialogDistributionRef: MatDialogRef<any>;
   private dialogFirstBidRef: MatDialogRef<any>;
   private currentPlayerId = localStorage.getItem(PLAYER_ID_KEY);
-  readonly isDev = !environment.production;
 
   readonly positions = ['bottom', 'left', 'top', 'right'];
 
@@ -132,9 +128,6 @@ export class RoundComponent implements OnDestroy {
     } else if (!isDistributionStep && modalOpened) {
       this.dialogDistributionRef.close(undefined);
     }
-    if (isDistributionStep && game.stats.team1.score.length) {
-      this.seeStats(game);
-    }
   }
 
   private manageBid(game: Belote) {
@@ -220,10 +213,6 @@ export class RoundComponent implements OnDestroy {
     }
   }
 
-  reset() {
-    this.beloteService.initGame(this.currentPlayerId).subscribe();
-  }
-
   getPlayedCards(game: Belote): { value: string; rank: number; position: string; isBest: boolean; pseudo: string; id: string }[] {
     if (game.players.every(p => !p.playedCard)) {
       return null;
@@ -263,21 +252,9 @@ export class RoundComponent implements OnDestroy {
     this.beloteService.updateGame({ players, pastTurns, turnTo: this.currentPlayerId });
   }
 
-  seeLastTurn(game: Belote) {
-    this.matDialog.open(LastTurnComponent, { width: '550px', data: game.pastTurns[game.pastTurns.length - 1] });
-  }
-
-  test() {
-    this.beloteService.updateGame(this.testService.getBeforeEnd());
-  }
-
   private calculateRound(game: Belote) {
     if (game.turnTo === this.currentPlayerId && game.pastTurns?.length === 8) {
       this.beloteService.calculateTurnScore(game);
     }
-  }
-
-  seeStats(game: Belote) {
-    this.matDialog.open(StatsComponent, { width: '550px', data: game.stats });
   }
 }

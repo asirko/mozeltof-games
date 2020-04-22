@@ -1,0 +1,26 @@
+<app-last-turn [lastTurn]="game.pastTurns[0]"></app-last-turn>
+
+<mat-divider></mat-divider>
+
+<ng-container *ngIf="isDev">
+  <div class="test">
+    <p>Zone de test ne doit être visible qu'en <strong>mode DEV</strong></p>
+    <div class="btn-area">
+      <button mat-raised-button color="warn" (click)="reset()" matTooltip="Recommence le jeu de zéro">Reset</button>
+      <button
+        mat-raised-button
+        color="warn"
+        (click)="test()"
+        matTooltip="Set l'état du jeu en fin d'une manche pour tester le ramassage des cartes"
+      >
+        État spécifique 1
+      </button>
+    </div>
+  </div>
+
+  <mat-divider></mat-divider>
+</ng-container>
+
+<div class="controls btn-area">
+  <button mat-raised-button color="primary" (click)="closeDrawer.next()">Fermer</button>
+</div>

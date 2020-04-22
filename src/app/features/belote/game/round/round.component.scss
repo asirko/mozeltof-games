@@ -1,12 +1,17 @@
 @import "~@angular/material/theming";
+@import "palette";
 
 :host {
   display: block;
 }
+
+mat-drawer-content {
+  height: 100vh;
+}
+
 .game {
   display: block;
-  height: 100vh;
-  max-height: 800px;
+  min-height: 600px;
   position: relative;
   background: rgba(blue, 0.1);
 }
@@ -125,4 +130,19 @@ app-card:last-child {
       left: calc(50% + 35px);
     }
   }
+}
+
+.drawer-btn {
+  position: absolute;
+  top: 10px;
+  left: 0;
+  padding: 5px 10px 5px 5px;
+  border: none;
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+  background-color: mat-color($primary);
+  color: mat-color($primary, "500-contrast");
+  z-index: 1;
+  outline: none;
+  cursor: pointer;
 }

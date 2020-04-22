@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { BeloteColor } from '../../../belote';
 
 @Component({
   selector: 'app-first-bid',
@@ -39,6 +38,7 @@ export class FirstBidComponent {
   readonly color;
   readonly value;
   readonly card;
+
   constructor(@Inject(MAT_DIALOG_DATA) data: string) {
     this.card = data;
     [this.value, this.color] = data.split(' ');

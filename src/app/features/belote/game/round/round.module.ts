@@ -9,13 +9,23 @@ import { FirstBidComponent } from './modals/first-bid.component';
 import { SecondBidComponent } from './modals/second-bid.component';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { CardModule } from './card/card.module';
-import { LastTurnComponent } from './modals/last-turn.component';
-import { StatsComponent } from './modals/stats.component';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { DrawerModule } from './drawer/drawer.module';
 
 @NgModule({
-  declarations: [RoundComponent, DistributeComponent, FirstBidComponent, SecondBidComponent, LastTurnComponent, StatsComponent],
-  imports: [CommonModule, MatDialogModule, MatButtonModule, MatIconModule, DragDropModule, CardModule, MatSnackBarModule],
+  declarations: [RoundComponent, DistributeComponent, FirstBidComponent, SecondBidComponent],
+  imports: [
+    CommonModule,
+    MatDialogModule,
+    MatButtonModule,
+    MatIconModule,
+    DragDropModule,
+    CardModule,
+    MatSnackBarModule,
+    MatSidenavModule,
+    DrawerModule,
+  ],
   exports: [RoundComponent],
 })
 export class RoundModule {}

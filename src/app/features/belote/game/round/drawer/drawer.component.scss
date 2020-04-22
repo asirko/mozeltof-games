@@ -1,0 +1,18 @@
+@import "palette";
+
+:host {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 1280px;
+  max-width: 80vw;
+  height: 100vh;
+  padding: 40px 0;
+}
+
+.test {
+  margin: 20px 0;
+  strong {
+    color: mat-color($warn);
+  }
+}

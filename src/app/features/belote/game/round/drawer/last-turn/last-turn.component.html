@@ -1,0 +1,12 @@
+<h3>Dernier tour</h3>
+
+<div class="cards" *ngIf="lastTurn; else noPreviousTurn">
+  <div class="card" *ngFor="let pa of lastTurn.cards">
+    <span>{{ pa.pseudo }} <mat-icon *ngIf="pa.hasWon">star</mat-icon></span>
+    <app-card [card]="pa.value" [ngClass]="pa.value" class="mat-elevation-z4"></app-card>
+  </div>
+</div>
+
+<ng-template #noPreviousTurn>
+  <p><em>Premier tour de jeu, il n'y pas de dernier pli à montrer</em></p>
+</ng-template>

@@ -9,5 +9,9 @@ body {
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
+@import "styles/reset";
 @import "styles/theme";
 @import "styles/drag-drop";
+
+@import "styles/button";
+@import "styles/typo";

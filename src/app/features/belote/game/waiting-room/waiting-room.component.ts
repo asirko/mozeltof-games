@@ -15,7 +15,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 export class WaitingRoomComponent implements OnDestroy {
   readonly toggleCtrl = new FormControl(false);
   readonly currentPlayerId = localStorage.getItem(PLAYER_ID_KEY);
-  readonly game$ = this.beloteService.fireGame.valueChanges().pipe(
+  readonly game$ = this.beloteService.game$.pipe(
     tap(v => {
       if (v.players.every(p => p.ready) && v.players.length === 4) {
         this.router.navigate(['..', 'round'], { relativeTo: this.route });
@@ -28,9 +28,7 @@ export class WaitingRoomComponent implements OnDestroy {
   private readonly destroy$ = new Subject<void>();
 
   constructor(private beloteService: BeloteService, private router: Router, private route: ActivatedRoute) {
-    this.toggleCtrl.valueChanges
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(isReady => this.beloteService.updatePlayerStatus(isReady));
+    this.toggleCtrl.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(isReady => this.beloteService.updatePlayerStatus(isReady));
   }
 
   ngOnDestroy(): void {

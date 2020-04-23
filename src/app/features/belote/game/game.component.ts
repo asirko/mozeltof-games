@@ -8,7 +8,5 @@ import { BeloteService } from '../belote.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GameComponent {
-  game$ = this.beloteService.fireGame.valueChanges();
-
-  constructor(private beloteService: BeloteService) {}
+  constructor() {}
 }

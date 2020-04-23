@@ -11,6 +11,7 @@ import { SecondBidComponent } from './modals/second-bid.component';
 import { CdkDragDrop, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
 import { TestService } from '../../test.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { AlertService } from '../../alert.service';
 
 @Component({
   selector: 'app-round',
@@ -25,7 +26,7 @@ export class RoundComponent implements OnDestroy {
 
   readonly positions = ['bottom', 'left', 'top', 'right'];
 
-  game$: Observable<Belote> = this.beloteService.fireGame.valueChanges().pipe(
+  game$: Observable<Belote> = this.beloteService.game$.pipe(
     tap(game => this.initGame(game)),
     map(game => this.reorderForDisplay(game)),
     map(game => this.addHandWithClues(game)),
@@ -45,19 +46,15 @@ export class RoundComponent implements OnDestroy {
     private matDialog: MatDialog,
     private testService: TestService,
     private snackBar: MatSnackBar,
+    private alertService: AlertService,
   ) {
-    merge(
-      this.beloteService.getShowBelote$().pipe(mapTo('Belote !')), //
-      this.beloteService.getShowReBelote$().pipe(mapTo('Re-Belote !')),
-    )
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(label =>
-        this.snackBar.open(label, null, {
-          duration: 2000,
-          announcementMessage: '',
-          horizontalPosition: 'center',
-        }),
-      );
+    this.alertService.alerts$.pipe(takeUntil(this.destroy$)).subscribe(label =>
+      this.snackBar.open(label, null, {
+        duration: 2000,
+        announcementMessage: '',
+        horizontalPosition: 'center',
+      }),
+    );
   }
 
   ngOnDestroy(): void {

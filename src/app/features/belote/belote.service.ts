@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot } from '@angular/router';
-import { Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
-import { distinctUntilChanged, filter, first, map, mapTo, pairwise, switchMap, tap } from 'rxjs/operators';
+import { first, map, mapTo, switchMap, tap } from 'rxjs/operators';
 import { Belote, BeloteColor, getRandomDeck, Player } from './belote';
 import { PLAYER_ID_KEY, PSEUDO_KEY } from '../../shared/pseudo/pseudo.guard';
 import { fromPromise } from 'rxjs/internal-compatibility';
@@ -12,14 +12,17 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   providedIn: 'root',
 })
 export class BeloteService implements CanActivate {
-  fireGame: AngularFirestoreDocument<Belote>;
+  private fireGame$ = new BehaviorSubject<AngularFirestoreDocument<Belote>>(null);
+  readonly game$ = this.fireGame$.pipe(
+    switchMap(fireGame => (fireGame ? fireGame.valueChanges() : of(null))), //
+  );
 
   constructor(private angularFirestore: AngularFirestore, private matSnackBar: MatSnackBar) {}
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
     const id = route.params.id;
-    this.fireGame = this.angularFirestore.collection<Belote>('games').doc('/' + id);
-    return this.fireGame.valueChanges().pipe(
+    this.fireGame$.next(this.angularFirestore.collection<Belote>('games').doc('/' + id));
+    return this.game$.pipe(
       first(),
       switchMap(gameValue => {
         if (gameValue.players?.some(p => p.id === null)) {
@@ -40,28 +43,27 @@ export class BeloteService implements CanActivate {
             hand: [],
           });
         }
-        return fromPromise(this.fireGame.update({ players })).pipe(mapTo(true));
+        return fromPromise(this.fireGame$.getValue().update({ players })).pipe(mapTo(true));
       }),
     );
   }
 
   updatePlayerStatus(ready: boolean) {
     const currentPlayerId = localStorage.getItem(PLAYER_ID_KEY);
-    this.fireGame
-      .valueChanges()
+    this.game$
       .pipe(
         first(),
         map(v => v.players.map(p => (p.id === currentPlayerId ? { ...p, ready } : p))),
-        tap(players => this.fireGame.update({ players })),
+        tap(players => this.fireGame$.getValue().update({ players })),
       )
       .subscribe();
   }
 
   initGame(playerId: string): Observable<any> {
-    return this.fireGame.valueChanges().pipe(
+    return this.game$.pipe(
       first(),
       tap((game: Belote) =>
-        this.fireGame.update({
+        this.fireGame$.getValue().update({
           draw: getRandomDeck(),
           turnTo: playerId,
           players: game.players.map(p => ({
@@ -96,7 +98,7 @@ export class BeloteService implements CanActivate {
   }
 
   updateGame(partialGame: Partial<Belote>) {
-    this.fireGame.update(partialGame);
+    return this.fireGame$.getValue().update(partialGame);
   }
 
   getPlayableCards(playedCards: string[], playerHand: string[], atout: BeloteColor, requestedColor: BeloteColor): string[] {
@@ -217,29 +219,6 @@ export class BeloteService implements CanActivate {
       draw: Math.random() >= 0.5 ? team1Cards.concat(team2Cards) : team2Cards.concat(team1Cards),
       turnTo: game.players.find(p => p.isFirst).id,
     });
-  }
-
-  getShowBelote$(): Observable<boolean> {
-    return this.fireGame.valueChanges().pipe(
-      pairwise(),
-      map(([prev, curr]) => !prev.beloteFor && !!curr.beloteFor),
-      distinctUntilChanged(),
-      filter(shouldShow => shouldShow),
-    );
-  }
-  getShowReBelote$(): Observable<boolean> {
-    return this.fireGame.valueChanges().pipe(
-      filter(game => !!game.beloteFor),
-      pairwise(),
-      map(([prev, curr]) => {
-        const playedCard = curr.players.map(p => p.playedCard);
-        const beloteCardPlayed = ['Q ' + curr.atout, 'K ' + curr.atout].find(b => playedCard.includes(b));
-        const wasInPrev = prev.players.map(p => p.playedCard).includes(beloteCardPlayed);
-        return !wasInPrev;
-      }),
-      distinctUntilChanged(),
-      filter(shouldShow => shouldShow),
-    );
   }
 }
 

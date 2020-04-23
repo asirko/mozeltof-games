@@ -5,12 +5,14 @@ import { BeloteColor } from '../../../belote';
 @Component({
   selector: 'app-first-bid',
   template: `
-    <button mat-raised-button *ngFor="let color of colorChoice" color="primary" [mat-dialog-close]="color">Prendre à {{ color }}</button>
-    <button mat-raised-button color="accent" [mat-dialog-close]="null">Passer</button>
+    <div cdkDrag cdkDragRootElement=".cdk-overlay-pane">
+      <button mat-raised-button *ngFor="let color of colorChoice" color="primary" [mat-dialog-close]="color">Prendre à {{ color }}</button>
+      <button mat-raised-button color="accent" [mat-dialog-close]="null">Passer</button>
+    </div>
   `,
   styles: [
     `
-      :host {
+      div {
         display: flex;
         flex-direction: column;
       }

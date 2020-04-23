@@ -4,15 +4,17 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 @Component({
   selector: 'app-first-bid',
   template: `
-    <app-card class="mat-elevation-z4" [ngClass]="card" [card]="card"></app-card>
-    <button mat-raised-button color="primary" [mat-dialog-close]="color">
-      Prendre à <span class="color">{{ color }}</span>
-    </button>
-    <button mat-raised-button color="accent" [mat-dialog-close]="null">Passer</button>
+    <div cdkDrag cdkDragRootElement=".cdk-overlay-pane">
+      <app-card class="mat-elevation-z4" [ngClass]="card" [card]="card"></app-card>
+      <button mat-raised-button color="primary" [mat-dialog-close]="color">
+        Prendre à <span class="color">{{ color }}</span>
+      </button>
+      <button mat-raised-button color="accent" [mat-dialog-close]="null">Passer</button>
+    </div>
   `,
   styles: [
     `
-      :host {
+      div {
         display: flex;
         flex-direction: column;
         align-items: stretch;

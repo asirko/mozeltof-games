@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { PastTurn } from '../../../../belote';
+import { PastTurn } from '../../belote';
 
 @Component({
   selector: 'app-last-turn',

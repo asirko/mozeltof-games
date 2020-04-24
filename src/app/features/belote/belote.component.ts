@@ -1,25 +1,34 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, ViewChild } from '@angular/core';
-import { BeloteService } from '../../belote.service';
-import { filter, map, mapTo, takeUntil, tap } from 'rxjs/operators';
-import { PLAYER_ID_KEY } from '../../../../shared/pseudo/pseudo.guard';
-import { Belote, BeloteColor, PastAction, PastTurn, Player } from '../../belote';
-import { merge, Observable, Subject } from 'rxjs';
+import { BeloteService } from './belote.service';
+import { filter, map, takeUntil, tap } from 'rxjs/operators';
+import { PLAYER_ID_KEY } from '../../shared/pseudo/pseudo.guard';
+import { Belote, BeloteColor, PastAction, PastTurn, Player } from './belote';
+import { Observable, Subject } from 'rxjs';
 import { MatDialog, MatDialogRef, MatDialogState } from '@angular/material/dialog';
 import { DistributeComponent } from './modals/distribute.component';
 import { FirstBidComponent } from './modals/first-bid.component';
 import { SecondBidComponent } from './modals/second-bid.component';
 import { CdkDragDrop, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
-import { TestService } from '../../test.service';
+import { TestService } from './test.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { AlertService } from '../../alert.service';
+import { AlertService } from './alert.service';
+
+interface PlayedCard {
+  id: string;
+  rank: number;
+  value: string;
+  position: string;
+  isBest: boolean;
+  pseudo: string;
+}
 
 @Component({
   selector: 'app-round',
-  templateUrl: './round.component.html',
-  styleUrls: ['./round.component.scss'],
+  templateUrl: './belote.component.html',
+  styleUrls: ['./belote.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class RoundComponent implements OnDestroy {
+export class BeloteComponent implements OnDestroy {
   private dialogDistributionRef: MatDialogRef<any>;
   private dialogFirstBidRef: MatDialogRef<any>;
   private currentPlayerId = localStorage.getItem(PLAYER_ID_KEY);
@@ -64,7 +73,7 @@ export class RoundComponent implements OnDestroy {
 
   private initGame(game: Belote) {
     const noCards = !game.draw?.length && !game.players.some(p => p.hand?.length > 0) && !game.pastTurns?.length;
-    if (noCards && game.players[0].id === this.currentPlayerId) {
+    if (noCards && game.players[0].id === this.currentPlayerId && game.players.length === 4) {
       console.info('init game', this.currentPlayerId);
       this.beloteService.initGame(this.currentPlayerId).subscribe();
     }
@@ -210,7 +219,7 @@ export class RoundComponent implements OnDestroy {
     }
   }
 
-  getPlayedCards(game: Belote): { value: string; rank: number; position: string; isBest: boolean; pseudo: string; id: string }[] {
+  getPlayedCards(game: Belote): PlayedCard[] {
     if (game.players.every(p => !p.playedCard)) {
       return null;
     }
@@ -232,10 +241,7 @@ export class RoundComponent implements OnDestroy {
       .filter(pc => pc.value);
   }
 
-  takePlayedCards(
-    playedCards: { value: string; rank: number; position: string; isBest: boolean; pseudo: string; id: string }[],
-    game: Belote,
-  ) {
+  takePlayedCards(playedCards: PlayedCard[], game: Belote) {
     const players: Player[] = game.players.map(p => ({ ...p, hand: [...p.hand], playedCard: null }));
     const cards: PastAction[] = playedCards
       .sort((a, b) => a.rank - b.rank)

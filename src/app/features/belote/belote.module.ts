@@ -2,14 +2,33 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { BeloteRoutingModule } from './belote-routing.module';
-import { ListModule } from './list/list.module';
-import { GameModule } from './game/game.module';
-import { RoundModule } from './game/round/round.module';
-import { WaitingRoomModule } from './game/waiting-room/waiting-room.module';
+import { BeloteComponent } from './belote.component';
+import { DistributeComponent } from './modals/distribute.component';
+import { FirstBidComponent } from './modals/first-bid.component';
+import { SecondBidComponent } from './modals/second-bid.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { DragDropModule } from '@angular/cdk/drag-drop';
+import { CardModule } from './card/card.module';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { DrawerModule } from './drawer/drawer.module';
 
 @NgModule({
-  declarations: [],
-  imports: [CommonModule, BeloteRoutingModule, ListModule, GameModule, RoundModule, WaitingRoomModule],
+  declarations: [BeloteComponent, DistributeComponent, FirstBidComponent, SecondBidComponent],
+  imports: [
+    CommonModule,
+    BeloteRoutingModule,
+    MatDialogModule,
+    MatButtonModule,
+    MatIconModule,
+    DragDropModule,
+    CardModule,
+    MatSnackBarModule,
+    MatSidenavModule,
+    DrawerModule,
+  ],
   exports: [],
 })
 export class BeloteModule {}

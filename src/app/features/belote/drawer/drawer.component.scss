@@ -1,4 +1,4 @@
-@import "palette";
+@import "src/styles/shared/palette";
 
 :host {
   display: flex;
@@ -10,9 +10,10 @@
   padding: 40px 0;
 }
 
-.test {
-  margin: 20px 0;
-  strong {
-    color: mat-color($warn);
-  }
+.test strong {
+  color: mat-color($warn);
+}
+
+mat-divider {
+  margin: 20px;
 }

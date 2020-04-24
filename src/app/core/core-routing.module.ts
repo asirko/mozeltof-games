@@ -12,11 +12,15 @@ const routes: Routes = [
       {
         path: '',
         pathMatch: 'full',
-        redirectTo: 'belote',
+        redirectTo: 'game-list',
       },
       {
         path: 'belote',
         loadChildren: () => import('../features/belote/belote.module').then(m => m.BeloteModule),
+      },
+      {
+        path: 'game-list',
+        loadChildren: () => import('../features/game-list/game-list.module').then(m => m.GameListModule),
       },
     ],
   },

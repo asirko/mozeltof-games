@@ -57,12 +57,9 @@ export class AlertService {
   private showWhoDistributes$(): Observable<string> {
     return this.beloteService.game$.pipe(
       pairwise(),
-      filter(([prev, curr]: Belote[]) => prev.draw.length === 32 && curr.draw.length !== 32),
-      map(([, curr]: Belote[]) => curr),
-      map(game => {
-        const player = game.players.find(p => p.id === game.turnTo).pseudo;
-        return `${player} a distribué`;
-      }),
+      filter(([prev, curr]: Belote[]) => prev.draw && prev.draw.length === 32 && curr.draw.length !== 32),
+      map(([prev]: Belote[]) => prev.players.find(p => p.id === prev.turnTo).pseudo),
+      map(pseudo => `${pseudo} a distribué`),
       distinctUntilChanged(),
     );
   }

@@ -15,6 +15,7 @@ export interface Belote {
   beloteFor: string;
   pastTurns: PastTurn[];
   stats: BeloteStats;
+  history: BeloteHistory[];
 }
 
 export type BeloteColor = '♥' | '♦' | '♣' | '♠';
@@ -54,9 +55,8 @@ function _getRandomCards(cards: string[]): [string, string[]] {
 export interface Player {
   id: string;
   pseudo: string;
-  ready: boolean;
-  isFirst?: boolean;
   hand: string[];
+  isFirst?: boolean;
   handWithClues?: { value: string; isPlayable }[];
   playedCard?: string;
 }
@@ -80,4 +80,9 @@ export interface PastAction {
   pseudo: string;
   hasWon: boolean;
   id: string;
+}
+export interface BeloteHistory {
+  whoTook: string;
+  beloteFor: string;
+  turns: PastTurn[];
 }

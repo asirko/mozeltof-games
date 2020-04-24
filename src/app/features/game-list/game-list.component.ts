@@ -1,13 +1,13 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
 
 @Component({
-  selector: 'app-list',
-  templateUrl: './list.component.html',
-  styleUrls: ['./list.component.scss'],
+  selector: 'app-game-list',
+  templateUrl: './game-list.component.html',
+  styleUrls: ['./game-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ListComponent {
+export class GameListComponent {
   private readonly gameCollection = this.angularFirestore.collection('games');
   list$ = this.gameCollection.valueChanges({ idField: 'id' });
 

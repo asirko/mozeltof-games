@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { BeloteColor } from '../../../belote';
+import { BeloteColor } from '../belote';
 
 @Component({
   selector: 'app-first-bid',

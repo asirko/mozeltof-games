@@ -1,41 +1,13 @@
 import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
-import { ListComponent } from './list/list.component';
-import { GameComponent } from './game/game.component';
-import { PseudoGuard } from '../../shared/pseudo/pseudo.guard';
+import { RouterModule, Routes } from '@angular/router';
 import { BeloteService } from './belote.service';
-import { WaitingRoomComponent } from './game/waiting-room/waiting-room.component';
-import { RoundComponent } from './game/round/round.component';
+import { BeloteComponent } from './belote.component';
 
 const routes: Routes = [
   {
-    path: '',
-    pathMatch: 'full',
-    redirectTo: 'list',
-  },
-  {
-    path: 'list',
-    component: ListComponent,
-  },
-  {
-    path: 'game/:id',
-    component: GameComponent,
+    path: ':id',
+    component: BeloteComponent,
     canActivate: [BeloteService],
-    children: [
-      {
-        path: '',
-        pathMatch: 'full',
-        redirectTo: 'waiting-room',
-      },
-      {
-        path: 'waiting-room',
-        component: WaitingRoomComponent,
-      },
-      {
-        path: 'round',
-        component: RoundComponent,
-      },
-    ],
   },
 ];
 

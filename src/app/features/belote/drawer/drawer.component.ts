@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
-import { Belote } from '../../../belote';
-import { environment } from '../../../../../../environments/environment';
-import { BeloteService } from '../../../belote.service';
-import { PLAYER_ID_KEY } from '../../../../../shared/pseudo/pseudo.guard';
+import { Belote } from '../belote';
+import { environment } from '../../../../environments/environment';
+import { BeloteService } from '../belote.service';
+import { PLAYER_ID_KEY } from '../../../shared/pseudo/pseudo.guard';
 import { MatDialog } from '@angular/material/dialog';
-import { TestService } from '../../../test.service';
+import { TestService } from '../test.service';
 
 @Component({
   selector: 'app-drawer',

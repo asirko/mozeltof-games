@@ -1,9 +1,9 @@
 <mat-drawer-container hasBackdrop="true" *ngIf="game$ | async as game">
   <mat-drawer #drawer mode="over">
-    <app-drawer [game]="game" (closeDrawer)="drawer.close()"></app-drawer>
+    <app-drawer *ngIf="game.stats" [game]="game" (closeDrawer)="drawer.close()"></app-drawer>
   </mat-drawer>
   <mat-drawer-content>
-    <button class="drawer-btn" (click)="drawer.toggle()"><mat-icon>history</mat-icon></button>
+    <button *ngIf="game.stats" class="drawer-btn" (click)="drawer.toggle()"><mat-icon>history</mat-icon></button>
 
     <div class="game">
       <div class="player" [ngClass]="'is-' + positions[i]" *ngFor="let player of game.players; let i = index; let isFirst = first">

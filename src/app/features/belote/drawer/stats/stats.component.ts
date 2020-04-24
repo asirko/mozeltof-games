@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { BeloteStats } from '../../../../belote';
+import { BeloteStats } from '../../belote';
 
 @Component({
   selector: 'app-stats',

@@ -3,7 +3,9 @@
     <app-drawer *ngIf="game.stats" [game]="game" (closeDrawer)="drawer.close()"></app-drawer>
   </mat-drawer>
   <mat-drawer-content>
-    <button *ngIf="game.stats" class="drawer-btn" (click)="drawer.toggle()"><mat-icon>history</mat-icon></button>
+    <button *ngIf="game.stats" class="drawer-btn" (click)="drawer.toggle()">
+      <mat-icon>history</mat-icon>
+    </button>
 
     <div class="game">
       <div class="player" [ngClass]="'is-' + positions[i]" *ngFor="let player of game.players; let i = index; let isFirst = first">
@@ -60,6 +62,15 @@
               Ramasser
             </button>
           </ng-container>
+        </div>
+
+        <div *ngIf="game.players.length < 4" class="waiting">
+          <p class="missing-player">
+            Il manque encore <span class="waiting-player">{{ 4 - game.players.length }}</span> {4 - game.players.length, plural, =1
+            {joueur.} other { joueurs. }}
+          </p>
+          <p class="additional-info">Partagez le lien de cette salle de jeu pour inviter des joueurs.</p>
+          <button mat-raised-button color="primary" (click)="copyUrl()">Copier le lien de cette salle <mat-icon>share</mat-icon></button>
         </div>
       </div>
     </div>

@@ -13,6 +13,7 @@ import { TestService } from './test.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AlertService } from './alert.service';
 import { CutComponent } from './modals/cut.component';
+import { Clipboard } from '@angular/cdk/clipboard';
 
 interface PlayedCard {
   id: string;
@@ -59,11 +60,11 @@ export class BeloteComponent implements OnDestroy {
     private testService: TestService,
     private snackBar: MatSnackBar,
     private alertService: AlertService,
+    private clipboard: Clipboard,
   ) {
     this.alertService.alerts$.pipe(takeUntil(this.destroy$)).subscribe(label =>
       this.snackBar.open(label, null, {
         duration: 2000,
-        announcementMessage: '',
         horizontalPosition: 'center',
       }),
     );
@@ -282,5 +283,13 @@ export class BeloteComponent implements OnDestroy {
     if (game.turnTo === this.currentPlayerId && game.pastTurns?.length === 8) {
       this.beloteService.calculateTurnScore(game);
     }
+  }
+
+  copyUrl() {
+    this.clipboard.copy(window.location.toString());
+    this.snackBar.open('URL copiée !', null, {
+      duration: 2000,
+      horizontalPosition: 'center',
+    });
   }
 }

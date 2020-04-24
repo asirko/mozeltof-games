@@ -14,9 +14,12 @@ import { CardModule } from './card/card.module';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { DrawerModule } from './drawer/drawer.module';
+import { CutComponent } from './modals/cut.component';
+import { MatSliderModule } from '@angular/material/slider';
+import { AutofocusModule } from '../../shared/directives/autofocus/autofocus.module';
 
 @NgModule({
-  declarations: [BeloteComponent, DistributeComponent, FirstBidComponent, SecondBidComponent],
+  declarations: [BeloteComponent, DistributeComponent, FirstBidComponent, SecondBidComponent, CutComponent],
   imports: [
     CommonModule,
     BeloteRoutingModule,
@@ -28,6 +31,8 @@ import { DrawerModule } from './drawer/drawer.module';
     MatSnackBarModule,
     MatSidenavModule,
     DrawerModule,
+    MatSliderModule,
+    AutofocusModule,
   ],
   exports: [],
 })

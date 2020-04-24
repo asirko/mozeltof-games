@@ -12,6 +12,7 @@ import { CdkDragDrop, CdkDropList, moveItemInArray } from '@angular/cdk/drag-dro
 import { TestService } from './test.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AlertService } from './alert.service';
+import { CutComponent } from './modals/cut.component';
 
 interface PlayedCard {
   id: string;
@@ -29,8 +30,9 @@ interface PlayedCard {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BeloteComponent implements OnDestroy {
+  private dialogCutRef: MatDialogRef<any>;
   private dialogDistributionRef: MatDialogRef<any>;
-  private dialogFirstBidRef: MatDialogRef<any>;
+  private dialogBidRef: MatDialogRef<any>;
   private currentPlayerId = localStorage.getItem(PLAYER_ID_KEY);
 
   readonly positions = ['bottom', 'left', 'top', 'right'];
@@ -40,6 +42,7 @@ export class BeloteComponent implements OnDestroy {
     map(game => this.reorderForDisplay(game)),
     map(game => this.addHandWithClues(game)),
     tap(console.info),
+    tap(game => this.manageCut(game)),
     tap(game => this.manageDistribution(game)),
     tap(game => this.manageBid(game)),
     tap(game => this.manageSecondDistribution(game)),
@@ -106,10 +109,30 @@ export class BeloteComponent implements OnDestroy {
     return { ...game, players } as Belote;
   }
 
+  private manageCut(game: Belote) {
+    const modalOpened = this.dialogCutRef?.getState() === MatDialogState.OPEN;
+    const isCutStep = game.turnTo === this.currentPlayerId && game.draw.length === 32 && !game.hasBeenCut;
+    if (isCutStep && !modalOpened) {
+      this.dialogCutRef = this.matDialog.open(CutComponent, { width: '250px', disableClose: true, hasBackdrop: false });
+      this.dialogCutRef
+        .afterClosed()
+        .pipe(
+          takeUntil(this.destroy$),
+          filter(cut => cut !== undefined),
+        )
+        .subscribe((cut: number) => {
+          const draw = [...game.draw.slice(cut), ...game.draw.slice(0, cut)];
+          this.beloteService.updateGame({ draw, turnTo: game.players[1].id, hasBeenCut: true });
+        });
+    } else if (isCutStep && !modalOpened) {
+      this.dialogCutRef.close(undefined);
+    }
+  }
+
   private manageDistribution(game: Belote) {
     // todo before to distribute cards it need to cut the deck
     const modalOpened = this.dialogDistributionRef?.getState() === MatDialogState.OPEN;
-    const isDistributionStep = game.turnTo === this.currentPlayerId && game.draw.length === 32;
+    const isDistributionStep = game.turnTo === this.currentPlayerId && game.draw.length === 32 && game.hasBeenCut;
     if (isDistributionStep && !modalOpened) {
       this.dialogDistributionRef = this.matDialog.open(DistributeComponent, { width: '250px', disableClose: true, hasBackdrop: false });
       this.dialogDistributionRef
@@ -137,17 +160,17 @@ export class BeloteComponent implements OnDestroy {
   }
 
   private manageBid(game: Belote) {
-    const modalOpened = this.dialogFirstBidRef?.getState() === MatDialogState.OPEN;
+    const modalOpened = this.dialogBidRef?.getState() === MatDialogState.OPEN;
     const isTimeToBid = game.draw?.length === 12 && game.turnTo === this.currentPlayerId;
     if (isTimeToBid && !modalOpened) {
       const bidComponent: any = game.isSecondBid ? SecondBidComponent : FirstBidComponent;
-      this.dialogFirstBidRef = this.matDialog.open(bidComponent, {
+      this.dialogBidRef = this.matDialog.open(bidComponent, {
         width: '250px',
         disableClose: true,
         data: game.draw[0],
         hasBackdrop: false,
       });
-      this.dialogFirstBidRef.afterClosed().subscribe(chosenColor => {
+      this.dialogBidRef.afterClosed().subscribe(chosenColor => {
         if (chosenColor) {
           const [firstCard, ...draw] = game.draw;
           const players: Player[] = game.players.map(p => ({ ...p, hand: [...p.hand] }));
@@ -164,7 +187,7 @@ export class BeloteComponent implements OnDestroy {
         }
       });
     } else if (!isTimeToBid && modalOpened) {
-      this.dialogFirstBidRef.close(undefined);
+      this.dialogBidRef.close(undefined);
     }
   }
 

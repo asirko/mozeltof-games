@@ -13,6 +13,15 @@ import { TestService } from './test.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AlertService } from './alert.service';
 
+interface PlayedCard {
+  id: string;
+  rank: number;
+  value: string;
+  position: string;
+  isBest: boolean;
+  pseudo: string;
+}
+
 @Component({
   selector: 'app-round',
   templateUrl: './belote.component.html',
@@ -210,7 +219,7 @@ export class BeloteComponent implements OnDestroy {
     }
   }
 
-  getPlayedCards(game: Belote): { value: string; rank: number; position: string; isBest: boolean; pseudo: string; id: string }[] {
+  getPlayedCards(game: Belote): PlayedCard[] {
     if (game.players.every(p => !p.playedCard)) {
       return null;
     }
@@ -232,10 +241,7 @@ export class BeloteComponent implements OnDestroy {
       .filter(pc => pc.value);
   }
 
-  takePlayedCards(
-    playedCards: { value: string; rank: number; position: string; isBest: boolean; pseudo: string; id: string }[],
-    game: Belote,
-  ) {
+  takePlayedCards(playedCards: PlayedCard[], game: Belote) {
     const players: Player[] = game.players.map(p => ({ ...p, hand: [...p.hand], playedCard: null }));
     const cards: PastAction[] = playedCards
       .sort((a, b) => a.rank - b.rank)

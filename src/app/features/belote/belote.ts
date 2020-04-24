@@ -54,7 +54,6 @@ function _getRandomCards(cards: string[]): [string, string[]] {
 export interface Player {
   id: string;
   pseudo: string;
-  ready: boolean;
   isFirst?: boolean;
   hand: string[];
   handWithClues?: { value: string; isPlayable }[];

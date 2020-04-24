@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot } from '@angular/router';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
-import { first, map, mapTo, switchMap, tap } from 'rxjs/operators';
+import { first, mapTo, switchMap, tap } from 'rxjs/operators';
 import { Belote, BeloteColor, getRandomDeck, Player } from './belote';
 import { PLAYER_ID_KEY, PSEUDO_KEY } from '../../shared/pseudo/pseudo.guard';
 import { fromPromise } from 'rxjs/internal-compatibility';
@@ -39,24 +39,12 @@ export class BeloteService implements CanActivate {
           players.push({
             pseudo: localStorage.getItem(PSEUDO_KEY),
             id: localStorage.getItem(PLAYER_ID_KEY),
-            ready: false,
             hand: [],
           });
         }
         return fromPromise(this.fireGame$.getValue().update({ players })).pipe(mapTo(true));
       }),
     );
-  }
-
-  updatePlayerStatus(ready: boolean) {
-    const currentPlayerId = localStorage.getItem(PLAYER_ID_KEY);
-    this.game$
-      .pipe(
-        first(),
-        map(v => v.players.map(p => (p.id === currentPlayerId ? { ...p, ready } : p))),
-        tap(players => this.fireGame$.getValue().update({ players })),
-      )
-      .subscribe();
   }
 
   initGame(playerId: string): Observable<any> {
@@ -69,7 +57,6 @@ export class BeloteService implements CanActivate {
           players: game.players.map(p => ({
             id: p.id,
             pseudo: p.pseudo,
-            ready: p.ready,
             playedCard: null,
             hand: [],
             isFirst: null,

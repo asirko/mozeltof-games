@@ -222,7 +222,7 @@ export class BeloteComponent implements OnDestroy {
       event.container === this.playMatElement &&
       game.turnTo === this.currentPlayerId &&
       !currentPlayer.playedCard &&
-      currentPlayer.handWithClues[event.previousIndex].isPlayable;
+      currentPlayer.handWithClues?.[event.previousIndex]?.isPlayable;
 
     if (event.previousContainer === event.container) {
       // reorder its own game

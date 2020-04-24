@@ -201,6 +201,8 @@ export class BeloteService implements CanActivate {
       },
     ];
 
+    const turnToIndex = game.players.findIndex(p => p.isFirst) === 0 ? 3 : game.players.findIndex(p => p.isFirst) - 1;
+
     return this.updateGame({
       stats: {
         team1: { ...game.stats.team1, score: [...game.stats.team1.score, team1Score] },
@@ -216,7 +218,7 @@ export class BeloteService implements CanActivate {
       litige,
       history,
       draw: Math.random() >= 0.5 ? team1Cards.concat(team2Cards) : team2Cards.concat(team1Cards),
-      turnTo: game.players.find(p => p.isFirst).id,
+      turnTo: game.players[turnToIndex].id,
     });
   }
 }

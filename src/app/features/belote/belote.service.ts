@@ -3,7 +3,7 @@ import { ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot } from '@angul
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
 import { first, mapTo, switchMap, tap } from 'rxjs/operators';
-import { Belote, BeloteColor, getRandomDeck, Player } from './belote';
+import { Belote, BeloteColor, BeloteHistory, getRandomDeck, Player } from './belote';
 import { PLAYER_ID_KEY, PSEUDO_KEY } from '../../shared/pseudo/pseudo.guard';
 import { fromPromise } from 'rxjs/internal-compatibility';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -79,6 +79,7 @@ export class BeloteService implements CanActivate {
               score: [],
             },
           },
+          history: [],
         }),
       ),
     );
@@ -190,6 +191,16 @@ export class BeloteService implements CanActivate {
         team2Score += 20;
       }
     }
+
+    const history: BeloteHistory[] = [
+      ...game.history,
+      {
+        beloteFor: game.beloteFor,
+        turns: [...game.pastTurns],
+        whoTook: game.whoTook,
+      },
+    ];
+
     return this.updateGame({
       stats: {
         team1: { ...game.stats.team1, score: [...game.stats.team1.score, team1Score] },
@@ -203,6 +214,7 @@ export class BeloteService implements CanActivate {
       beloteFor: null,
       whoTook: null,
       litige,
+      history,
       draw: Math.random() >= 0.5 ? team1Cards.concat(team2Cards) : team2Cards.concat(team1Cards),
       turnTo: game.players.find(p => p.isFirst).id,
     });

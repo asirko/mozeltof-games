@@ -17,6 +17,7 @@ import { DrawerModule } from './drawer/drawer.module';
 import { CutComponent } from './modals/cut.component';
 import { MatSliderModule } from '@angular/material/slider';
 import { AutofocusModule } from '../../shared/directives/autofocus/autofocus.module';
+import { ClipboardModule } from '@angular/cdk/clipboard';
 
 @NgModule({
   declarations: [BeloteComponent, DistributeComponent, FirstBidComponent, SecondBidComponent, CutComponent],
@@ -33,6 +34,7 @@ import { AutofocusModule } from '../../shared/directives/autofocus/autofocus.mod
     DrawerModule,
     MatSliderModule,
     AutofocusModule,
+    ClipboardModule,
   ],
   exports: [],
 })
